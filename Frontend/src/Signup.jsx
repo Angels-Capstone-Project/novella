@@ -1,6 +1,7 @@
 import React,{ useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./Signup.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ const Signup = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="signup-form">
+    <form onSubmit={handleSubmit} className="auth-form">
       <h2> Create an account</h2>
 
       <input

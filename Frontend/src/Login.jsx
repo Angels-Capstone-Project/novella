@@ -40,7 +40,7 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
+    <form onSubmit={handleSubmit} className="auth-form">
       <h2>Log in</h2>
 
       <input
