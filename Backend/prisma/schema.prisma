@@ -19,6 +19,8 @@ id           String  @id @default(uuid())
 email      String  @unique
 username   String  @unique
 password     String
+birthday     DateTime?
+pronouns      String?
 bio         String?
 stories     Story[] 
 comments   Comment[]
