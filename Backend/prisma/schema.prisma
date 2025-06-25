@@ -20,9 +20,9 @@ email      String  @unique
 username   String  @unique
 password     String
 bio         String?
-stories   Story[] 
-comments Comment[]
-createdAt  DateTime  @default(now())
+stories     Story[] 
+comments   Comment[]
+createdAt    DateTime  @default(now())
 }
 
 model Story {
