@@ -77,20 +77,22 @@ const Signup = () => {
       <div className="birth-section">
         <label>Birthday</label>
         <div className="birth-inputs">
-          <input
-            type="text"
-            name="birthDay"
-            placeholder="DD"
-            value={formData.birthDay}
-            onChange={handleChange}
-            required
-          />
+
 
           <input
             type="text"
             name="birthMonth"
             placeholder="MM"
             value={formData.birthMonth}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="birthDay"
+            placeholder="DD"
+            value={formData.birthDay}
             onChange={handleChange}
             required
           />

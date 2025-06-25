@@ -22,6 +22,8 @@ password     String
 birthday     DateTime?
 pronouns      String?
 bio         String?
+LikedStories   Story[]  @relation("LikedStories")
+ReadStories   Story[]  @relation("ReadStories")
 stories     Story[] 
 comments   Comment[]
 createdAt    DateTime  @default(now())
@@ -33,6 +35,8 @@ title    String
 description   String?
 content   String
 genre   String
+likedBy   User[]  @relation("LikedStories")
+readBy   User[]  @relation("ReadStories")
 coverImage    String?
 author   User   @relation(fields: [authorId], references: [id])
 authorId   String

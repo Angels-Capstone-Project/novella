@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
         email,
         password: hashedPassword,
         pronouns,
-        birthday: birthday? new Date(birthday): undefined
+        birthday: birthday ? new Date(birthday) : undefined
       },
     });
 
