@@ -63,7 +63,7 @@ const Login = () => {
 
       <button type="submit">Login</button>
       <p style ={{marginTop: "1rem"}}>
-        Already have an account? <Link to ="/signup">Sign Up</Link>
+        Don't have an account? <Link to ="/signup">Sign Up</Link>
       </p>
     </form>
   );
