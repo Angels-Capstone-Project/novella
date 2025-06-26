@@ -61,7 +61,7 @@ router.get("/top-picks/:userId", async (req, res) => {
     }
 
     const shuffled = topPicks.sort(() => 0.5 - Math.random());
-    res.json(shuffled.slice(0, 10));
+    res.json(shuffled.slice(0, 20));
   } catch (error) {
     console.error("Failed to fetch top picks", error);
     res.status(500).json({ error: "Server error while fetching top picks" });
@@ -87,7 +87,7 @@ router.get("/top-us", async (req, res) => {
         popularityScore: story.readBy.length + story.likedBy.length,
       }))
       .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 10);
+      .slice(0, 20);
 
     res.json(sorted);
   } catch (error) {
@@ -98,18 +98,24 @@ router.get("/top-us", async (req, res) => {
 
 router.get("/genre/:genre", async (req, res) => {
   const { genre } = req.params;
+  //   console.log("genre_ top" ,genre);
 
   try {
     if (!genre) {
       return res.status(400).json({ error: "Genre parameter is required" });
     }
     const stories = await prisma.story.findMany({
-      where: { genre },
+      where: { genre:{
+        equals:genre,
+        mode: "insensitive",
+      },
+    },
       include: {
         readBy: true,
         likedBy: true,
       },
     });
+    // console.log("genre_ bottom" ,genre);
 
     const sorted = stories
       .map((story) => ({
@@ -117,7 +123,7 @@ router.get("/genre/:genre", async (req, res) => {
         popularityScore: story.readBy.length + story.likedBy.length,
       }))
       .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 10);
+      .slice(0, 20);
 
     res.json(sorted);
   } catch (error) {
