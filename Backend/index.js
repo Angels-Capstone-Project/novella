@@ -1,20 +1,24 @@
-const express = require('express');
-const cors = require('cors');
-const session = require('express-session');
-const dotenv = require('dotenv');
-const authRoutes = require('./routes/auth');
+import express from 'express';
+import cors from 'cors';
+import session from 'express-session';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth.js';
+import storyRoutes from './routes/storyRoutes.js';
+
 
 dotenv.config();
 
 const app= express();
 const PORT = process.env.PORT || 3000
 
+app.use(express.json());
+
 app.use(cors({
     origin:'http://localhost:5173',
     credentials: true
 }));
 
-app.use(express.json());
+app.use('/', storyRoutes);
 
 app.use(session({
   secret: process.env.SESSION_SECRET, 

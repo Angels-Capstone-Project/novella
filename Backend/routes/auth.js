@@ -1,6 +1,6 @@
-const express = require("express");
-const bcrypt = require("bcrypt");
-const { PrismaClient } = require("../generated/prisma");
+import express  from "express";
+import bcrypt from "bcrypt";
+import { PrismaClient } from "../generated/prisma/index.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
         email,
         password: hashedPassword,
         pronouns,
-        birthday: birthday? new Date(birthday): undefined
+        birthday: birthday ? new Date(birthday) : undefined
       },
     });
 
@@ -131,4 +131,4 @@ router.post("/logout", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;
