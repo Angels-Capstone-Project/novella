@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {useNavigate} from 'react-router-dom';
+import { BASE_URL } from "./utils/api";
 
 
 
@@ -29,7 +30,7 @@ const navigate = useNavigate();
     }
 
     try {
-      const res = await axios.post("http://localhost:3000/login", {
+      const res = await axios.post(`${BASE_URL}/login`, {
         email: formData.email,
         password: formData.password,
       });

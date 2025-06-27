@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { BASE_URL } from "./utils/api.js";
+x;
 
 const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller"];
 
@@ -9,11 +11,9 @@ const Home = ({ userId }) => {
   const [trendingByGenre, setTrendingByGenre] = useState({});
 
   useEffect(() => {
-    // console.log("Top_picks", "useEffect");
     const fetchTopPicks = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/top-picks/${userId}`);
-        // console.log("Top_picks", res.data);
+        const res = await axios.get(`${BASE_URL}/top-picks/${userId}`);
         setTopPicks(res.data);
       } catch (err) {
         console.error("Error fetching top picks:", err);
@@ -22,7 +22,7 @@ const Home = ({ userId }) => {
 
     const fetchTopUS = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/top-us");
+        const res = await axios.get(`${BASE_URL}/top-us`);
         setTopUS(res.data);
       } catch (err) {
         console.error("Error fetching top 10 in the US:", err);
@@ -33,7 +33,7 @@ const Home = ({ userId }) => {
       try {
         const results = await Promise.all(
           genres.map(async (genre) => {
-            const res = await axios.get(`http://localhost:3000/genre/${genre}`);
+            const res = await axios.get(`${BASE_URL}/genre/${genre}`);
             return { genre, stories: res.data };
           })
         );
@@ -56,28 +56,6 @@ const Home = ({ userId }) => {
     <div>
       <h2>{title}</h2>
       <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
-        {/* <div
-          style={{
-            minWidth: "150px",
-            padding: "10px",
-            background: "#f4f4f4",
-            borderRadius: "6px",
-            textAlign: "center",
-          }}
-        >
-          <img
-            src="https://via.placeholder.com/150"
-            alt="Dummy Book"
-            style={{
-              width: "100%",
-              height: "150px",
-              objectFit: "cover",
-              borderRadius: "4px",
-            }}
-          />
-          <p>Dummy Title</p>
-          <small>Dummy Genre</small>
-        </div> */}
         {Array.isArray(stories) &&
           stories.map((story, index) => (
             <div
@@ -114,20 +92,13 @@ const Home = ({ userId }) => {
   );
   return (
     <div style={{ padding: "20px" }}>
-      {renderStoryList(
-        "Top Picks for You",
-        Array.isArray(topPicks) ? topPicks : []
-      )}
-      {renderStoryList(
-        "Top 10 in the U.S.",
-        Array.isArray(topUS) ? topUS : [],
-        true
-      )}
+      {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [])}
+      {renderStoryList("Top 10 in the U.S.", topUS?.length ? topUS : [], true)}
       {Object.keys(trendingByGenre).map((genre) => (
         <div key={genre}>
           {renderStoryList(
             `Trending in ${genre}`,
-            Array.isArray(trendingByGenre[genre]) ? trendingByGenre[genre] : []
+            trendingByGenre[genre]?.length ? trendingByGenre[genre] : []
           )}
         </div>
       ))}

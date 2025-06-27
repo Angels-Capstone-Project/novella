@@ -8,6 +8,16 @@ const router = express.Router();
 router.post("/stories/:id/like", likeStory);
 router.post("/stories/:id/read", readStory);
 
+function sortStoriesByPopularity(stories, limit = 20) {
+  return stories
+    .map((story) => ({
+      ...story,
+      popularityScore: story.readBy.length + story.likedBy.length,
+    }))
+    .sort((a, b) => b.popularityScore - a.popularityScore)
+    .slice(0, limit);
+}
+
 router.get("/top-picks/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -81,14 +91,7 @@ router.get("/top-us", async (req, res) => {
       return res.status(404).json({ error: "No stories found for Top Us" });
     }
 
-    const sorted = stories
-      .map((story) => ({
-        ...story,
-        popularityScore: story.readBy.length + story.likedBy.length,
-      }))
-      .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 20);
-
+    const sorted = sortStoriesByPopularity(stories);
     res.json(sorted);
   } catch (error) {
     console.error("Top Us Error:", error);
@@ -98,33 +101,25 @@ router.get("/top-us", async (req, res) => {
 
 router.get("/genre/:genre", async (req, res) => {
   const { genre } = req.params;
-  //   console.log("genre_ top" ,genre);
 
   try {
     if (!genre) {
       return res.status(400).json({ error: "Genre parameter is required" });
     }
     const stories = await prisma.story.findMany({
-      where: { genre:{
-        equals:genre,
-        mode: "insensitive",
+      where: {
+        genre: {
+          equals: genre,
+          mode: "insensitive",
+        },
       },
-    },
       include: {
         readBy: true,
         likedBy: true,
       },
     });
-    // console.log("genre_ bottom" ,genre);
 
-    const sorted = stories
-      .map((story) => ({
-        ...story,
-        popularityScore: story.readBy.length + story.likedBy.length,
-      }))
-      .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 20);
-
+    const sorted = sortStoriesByPopularity(stories);
     res.json(sorted);
   } catch (error) {
     console.error(error);
