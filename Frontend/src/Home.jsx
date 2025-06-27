@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "./utils/api.js";
-x;
+
 
 const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller"];
 
