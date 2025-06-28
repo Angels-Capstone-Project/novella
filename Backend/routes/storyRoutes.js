@@ -8,6 +8,16 @@ const router = express.Router();
 router.post("/stories/:id/like", likeStory);
 router.post("/stories/:id/read", readStory);
 
+function sortStoriesByPopularity(stories, limit = 20) {
+  return stories
+    .map((story) => ({
+      ...story,
+      popularityScore: story.readBy.length + story.likedBy.length,
+    }))
+    .sort((a, b) => b.popularityScore - a.popularityScore)
+    .slice(0, limit);
+}
+
 router.get("/top-picks/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -61,7 +71,7 @@ router.get("/top-picks/:userId", async (req, res) => {
     }
 
     const shuffled = topPicks.sort(() => 0.5 - Math.random());
-    res.json(shuffled.slice(0, 10));
+    res.json(shuffled.slice(0, 20));
   } catch (error) {
     console.error("Failed to fetch top picks", error);
     res.status(500).json({ error: "Server error while fetching top picks" });
@@ -81,14 +91,7 @@ router.get("/top-us", async (req, res) => {
       return res.status(404).json({ error: "No stories found for Top Us" });
     }
 
-    const sorted = stories
-      .map((story) => ({
-        ...story,
-        popularityScore: story.readBy.length + story.likedBy.length,
-      }))
-      .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 10);
-
+    const sorted = sortStoriesByPopularity(stories);
     res.json(sorted);
   } catch (error) {
     console.error("Top Us Error:", error);
@@ -104,21 +107,19 @@ router.get("/genre/:genre", async (req, res) => {
       return res.status(400).json({ error: "Genre parameter is required" });
     }
     const stories = await prisma.story.findMany({
-      where: { genre },
+      where: {
+        genre: {
+          equals: genre,
+          mode: "insensitive",
+        },
+      },
       include: {
         readBy: true,
         likedBy: true,
       },
     });
 
-    const sorted = stories
-      .map((story) => ({
-        ...story,
-        popularityScore: story.readBy.length + story.likedBy.length,
-      }))
-      .sort((a, b) => b.popularityScore - a.popularityScore)
-      .slice(0, 10);
-
+    const sorted = sortStoriesByPopularity(stories);
     res.json(sorted);
   } catch (error) {
     console.error(error);
