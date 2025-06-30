@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "./utils/api.js";
+import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
+import Header from "./Header.jsx"
+import Footer from "./Footer.jsx";
 
 
-const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller"];
+const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller", "Drama", "Comedy", "horror"];
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
@@ -62,13 +64,14 @@ const Home = ({ userId }) => {
   const renderStoryList = (title, stories, showNumber = false, onCardClick) => (
     <div>
       <h2>{title}</h2>
-      <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
+      <div style={{ display: "flex", overflowX: "auto", gap: "10px", paddingBottom: "12px" }}>
         {Array.isArray(stories) &&
           stories.map((story, index) => (
             <div
               key={story.id || index}
               style={{
-                minWidth: "150px",
+                minWidth: "clamp(120px, 20vw, 160px)",
+                flexShrink: 0,
                 padding: "10px",
                 background: "#f4f4f4",
                 borderRadius: "6px",
@@ -108,8 +111,9 @@ const Home = ({ userId }) => {
 
   return (
     <div className = "home-container">
+      <Header/>
       {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [], false, handelCardClick)}
-      {renderStoryList("Top 10 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
+      {renderStoryList("Top 20 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
       {Object.keys(trendingByGenre).map((genre) => (
         <div key={genre}>
           {renderStoryList(
@@ -125,7 +129,8 @@ const Home = ({ userId }) => {
         selectedBookId={selectedBookId}
         onClose={() => setShowModal(false)}
         />
-    )};
+    )}
+    <Footer/>
     </div>
   );
 };
