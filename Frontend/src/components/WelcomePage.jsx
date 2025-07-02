@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import Login from "./Login";
+import Signup from "./Signup";
 import "./WelcomePage.css";
 
-const WelcomePage = ({ onLoginClick, onSignupClick }) => {
+const WelcomePage = () => {
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const [showSignupModal, setShowSignupModal] = useState(false);
+
+  const handleLoginClick = () => {
+    setShowLoginModal(true);
+
+  };
+
+  const handleSignupClick = () => {
+    setShowSignupModal(true);
+
+  };
+
+  const handleCloseModal = () => {
+    setShowLoginModal(false);
+    setShowSignupModal(false);
+  };
   return (
     <div className="welcome-page">
       <header className="welcome-header">
         <div className="brand-name">Novella</div>
         <div className="auth-buttons">
-          <button onClick={onLoginClick}>Log In</button>
-          <button onClick={onSignupClick}>Sign Up</button>
+          <button onClick={handleLoginClick}>Log In</button>
+          <button onClick={handleSignupClick}>Sign Up</button>
         </div>
       </header>
 
@@ -55,6 +75,36 @@ const WelcomePage = ({ onLoginClick, onSignupClick }) => {
       </section>
 
       <footer className="welcome-footer">© 2025 Novella</footer>
+
+      {showLoginModal && (
+        <div className="modal-overlay" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <Login
+              onSwitch={() => {
+                setShowLoginModal(false);
+
+                setShowSignupModal(true);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      
+
+      {showSignupModal && (
+        <div className="modal-overlay" onClick={handleCloseModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <Signup
+              onSwitch={() => {
+                setShowSignupModal(false);
+
+                setShowLoginModal(true);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
