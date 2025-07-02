@@ -60,6 +60,7 @@ model Chapter {
   title   String
   content  String
   order     Int 
+  bannerImage    String?
   story   Story    @relation(fields: [storyId], references: [id])
   storyId   String
   createdAt  DateTime  @default(now())

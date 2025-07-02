@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 // Create a new chapter
 router.post("/", async (req, res) => {
-  const { title, content, order, storyId } = req.body;
+  const { title, content, order, storyId, bannerImage } = req.body;
 
   if (!title || !content || order === undefined || !storyId) {
     return res.status(400).json({ error: "Missing required fields." });
@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
     }
 
     const chapter = await prisma.chapter.create({
-      data: { title, content, order, storyId },
+      data: { title, content, order, storyId, bannerImage },
     });
 
     res.status(201).json({ message: "Chapter created successfully.", chapter });
