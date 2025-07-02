@@ -1,10 +1,10 @@
-import React,{ useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import "./Signup.css";
 import { BASE_URL } from "../utils/api";
 
-const Signup = () => {
+const Signup = ({onSwitch}) => {
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -46,10 +46,9 @@ const Signup = () => {
       });
 
       console.log("Success!", response.data);
-      alert("Signup successful")
-      
+      alert("Signup successful");
     } catch (error) {
-      alert(error.response?.data?.error||"Something went wrong.");
+      alert(error.response?.data?.error || "Something went wrong.");
     }
   };
 
@@ -78,8 +77,6 @@ const Signup = () => {
       <div className="birth-section">
         <label>Birthday</label>
         <div className="birth-inputs">
-
-
           <input
             type="text"
             name="birthMonth"
@@ -137,10 +134,16 @@ const Signup = () => {
 
       <button type="submit">Sign Up</button>
 
-      <p style ={{marginTop: "1rem"}}>
-        Already have an account? <Link to ="/login">Login in</Link>
+      <p>
+        Already have an account?{" "}
+        {onSwitch ? (
+          <span style={{ color: "red", cursor: "pointer" }} onClick={onSwitch}>
+            Login
+          </span>
+        ) : (
+          <Link to="/login">Log In</Link>
+        )}
       </p>
-
     </form>
   );
 };

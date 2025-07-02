@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/api";
 
-
-
-function Login() {
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const navigate = useNavigate();
+function Login({ onSwitch }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -72,11 +70,18 @@ const navigate = useNavigate();
       />
 
       <button type="submit">Login</button>
-      <p style ={{marginTop: "1rem"}}>
-        Don't have an account? <Link to ="/signup">Sign Up</Link>
+      <p>
+        Don’t have an account?{" "}
+        {onSwitch ? (
+          <span style={{ color: "red", cursor: "pointer" }} onClick={onSwitch}>
+            Sign Up
+          </span>
+        ) : (
+          <Link to="/signup">Sign Up</Link>
+        )}
       </p>
     </form>
   );
-};
+}
 
 export default Login;
