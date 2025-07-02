@@ -1,7 +1,14 @@
 import React from "react";
 import "./BookPreviewModal.css";
+import { useNavigate } from "react-router-dom";
 
 const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleStartReading =() => {
+    navigate(`/read/${selectedBookId}`);
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -19,7 +26,7 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
               <p className="author">{book.author}</p>
               <p className="description">{book.description}</p>
               <div className="actions">
-                <button className="start-reading">Start Reading</button>
+                <button className="start-reading" onClick={handleStartReading}>Start Reading</button>
                 <button className="add-library">+</button>
               </div>
             </div>
