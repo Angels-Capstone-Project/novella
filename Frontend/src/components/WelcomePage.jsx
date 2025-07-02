@@ -11,13 +11,11 @@ const WelcomePage = () => {
   const handleLoginClick = () => {
     setShowLoginModal(true);
 
-    // setShowSignupModal(false);
   };
 
   const handleSignupClick = () => {
     setShowSignupModal(true);
 
-    // setShowLoginModal(false);
   };
 
   const handleCloseModal = () => {
