@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "./utils/api.js";
+import { BASE_URL } from "../utils/api.js";
+import BookPreviewModal from "./BookPreviewModal.jsx";
+import Header from "./Header.jsx"
+import Footer from "./Footer.jsx";
 
 
-const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller"];
+const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller", "Drama", "Comedy", "horror"];
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
   const [topUS, setTopUS] = useState([]);
   const [trendingByGenre, setTrendingByGenre] = useState({});
+  const [showModal, setShowModal] =useState(false);
+  const [selectedBookId, setSelectedBookId] =useState(null);
+  const [booksInRow, setBooksInRow] =useState([]);
+
 
   useEffect(() => {
     const fetchTopPicks = async () => {
@@ -28,6 +35,8 @@ const Home = ({ userId }) => {
         console.error("Error fetching top 10 in the US:", err);
       }
     };
+
+    
 
     const fetchTrendingByGenre = async () => {
       try {
@@ -52,21 +61,24 @@ const Home = ({ userId }) => {
     fetchTrendingByGenre();
   }, [userId]);
 
-  const renderStoryList = (title, stories, showNumber = false) => (
+  const renderStoryList = (title, stories, showNumber = false, onCardClick) => (
     <div>
       <h2>{title}</h2>
-      <div style={{ display: "flex", overflowX: "scroll", gap: "10px" }}>
+      <div style={{ display: "flex", overflowX: "auto", gap: "10px", paddingBottom: "12px" }}>
         {Array.isArray(stories) &&
           stories.map((story, index) => (
             <div
               key={story.id || index}
               style={{
-                minWidth: "150px",
+                minWidth: "clamp(120px, 20vw, 160px)",
+                flexShrink: 0,
                 padding: "10px",
                 background: "#f4f4f4",
                 borderRadius: "6px",
                 textAlign: "center",
+                cursor: "pointer",
               }}
+              onClick={() => onCardClick(story.id, stories)}
             >
               {showNumber && (
                 <div style={{ fontSize: "24px", fontWeight: "bold" }}>
@@ -90,18 +102,35 @@ const Home = ({ userId }) => {
       </div>
     </div>
   );
+
+  const handelCardClick = (bookId, rowBooks) => {
+        setSelectedBookId(bookId);
+        setBooksInRow(rowBooks);
+        setShowModal(true);
+    };
+
   return (
-    <div style={{ padding: "20px" }}>
-      {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [])}
-      {renderStoryList("Top 10 in the U.S.", topUS?.length ? topUS : [], true)}
+    <div className = "home-container">
+      <Header/>
+      {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [], false, handelCardClick)}
+      {renderStoryList("Top 20 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
       {Object.keys(trendingByGenre).map((genre) => (
         <div key={genre}>
           {renderStoryList(
             `Trending in ${genre}`,
-            trendingByGenre[genre]?.length ? trendingByGenre[genre] : []
+            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [], false, handelCardClick
           )}
         </div>
       ))}
+
+      { showModal && (
+        <BookPreviewModal
+        books={booksInRow}
+        selectedBookId={selectedBookId}
+        onClose={() => setShowModal(false)}
+        />
+    )}
+    <Footer/>
     </div>
   );
 };

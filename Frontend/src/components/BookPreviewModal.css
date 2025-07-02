@@ -1,0 +1,79 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.book-scroll-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.book-card {
+  min-width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.book-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.book-card .author {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.book-card .description {
+  font-size: 0.85em;
+  margin: 10px 0;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.book-card .actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.start-reading {
+  background-color: #000;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+}
+
+.add-library {
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  font-size: 18px;
+}

@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #141414;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+position:relative; 
+  top: 0;
+  z-index: 1000;
+}
+
+@media (max-width: 600px){
+    .header{
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+.profile-icon {
+  width: 30px;
+  height: 30px;
+   border-radius: 50%; 
+}
+}

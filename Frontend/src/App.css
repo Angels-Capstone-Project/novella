@@ -1,0 +1,13 @@
+.home-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+  /* display: flex; */
+  flex-wrap: "wrap";
+  max-height: 100vh;
+  min-height: calc(100vh - 60px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 60px;  
+}
