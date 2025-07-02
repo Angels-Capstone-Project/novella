@@ -4,6 +4,7 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import storyRoutes from './routes/storyRoutes.js';
+import chapterRoutes from './routes/chapterRoutes.js';
 
 
 dotenv.config();
@@ -18,8 +19,6 @@ app.use(cors({
     credentials: true
 }));
 
-app.use('/', storyRoutes);
-
 app.use(session({
   secret: process.env.SESSION_SECRET, 
   resave: false,
@@ -28,6 +27,9 @@ app.use(session({
 }));
 
 app.use(authRoutes);
+app.use('/', storyRoutes);
+app.use('/chapters', chapterRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
