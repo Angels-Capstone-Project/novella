@@ -3,7 +3,6 @@ import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
 import Header from "./Header.jsx"
-import Footer from "./Footer.jsx";
 
 
 const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller", "Drama", "Comedy", "horror"];
@@ -130,7 +129,7 @@ const Home = ({ userId }) => {
         onClose={() => setShowModal(false)}
         />
     )}
-    <Footer/>
+    
     </div>
   );
 };

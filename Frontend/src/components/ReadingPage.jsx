@@ -19,6 +19,7 @@ const ReadingPage = () => {
   const [backendChapters, setBackendChapters] = useState([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [storyInfo, setStoryInfo] = useState(null);
 
   const chaptersToUse =
     backendChapters.length > 0 ? backendChapters : dummyChapters;
@@ -38,33 +39,59 @@ const ReadingPage = () => {
       }
     };
 
+    const fetchStoryInfo = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/stories/${bookId}`);
+        if (!res.ok) throw new Error("Failed to fetch story info");
+        const data = await res.json();
+        setStoryInfo(data);
+      } catch (err) {
+        console.error("Error fetching story info:", err);
+      }
+    };
+
     fetchChapters();
+    fetchStoryInfo();
   }, [bookId]);
 
   if (loading) return <p>Loading chapters...</p>;
 
   return (
-    <div className="reading-page">
-      <aside className="chapter-sidebar">
-        <h3>Chapters</h3>
-        <ul>
-          {chaptersToUse.map((chapter, index) => (
-            <li
-              key={chapter.id || index}
-              className={index === currentChapterIndex ? "active" : ""}
-              onClick={() => setCurrentChapterIndex(index)}
-            >
-              {chapter.title}
-            </li>
-          ))}
-        </ul>
-      </aside>
+    <>
+      {storyInfo && (
+        <div className="story-banner">
+          <img
+            src={storyInfo.coverImage || "https://picsum.photos/1200/400"}
+            alt={storyInfo.title}
+            className="story-banner-img"
+          />
+          <h1 className="story-title">{storyInfo.title}</h1>
+          <p className="story-author">by {storyInfo.author?.username}</p>
+        </div>
+      )}
 
-      <main className="chapter-content">
-        <h2>{currentChapter.title}</h2>
-        <p>{currentChapter.content}</p>
-      </main>
-    </div>
+      <div className="reading-page">
+        <aside className="chapter-sidebar">
+          <h3>Chapters</h3>
+          <ul>
+            {chaptersToUse.map((chapter, index) => (
+              <li
+                key={chapter.id || index}
+                className={index === currentChapterIndex ? "active" : ""}
+                onClick={() => setCurrentChapterIndex(index)}
+              >
+                {chapter.title}
+              </li>
+            ))}
+          </ul>
+        </aside>
+
+        <main className="chapter-content">
+          <h2>{currentChapter.title}</h2>
+          <p>{currentChapter.content}</p>
+        </main>
+      </div>
+    </>
   );
 };
 
