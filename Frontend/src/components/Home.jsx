@@ -122,6 +122,8 @@ const Home = ({ userId }) => {
         </div>
       ))}
 
+      <footer className="welcome-footer">© 2025 Novella</footer>
+
       { showModal && (
         <BookPreviewModal
         books={booksInRow}
