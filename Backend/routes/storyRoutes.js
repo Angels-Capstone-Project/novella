@@ -143,7 +143,7 @@ router.get("/users", async (req, res) => {
   }
 });
 
-// GET /stories/:id - Get full story info including author
+//  Get full story info including author
 router.get("/stories/:id", async (req, res) => {
   const { id } = req.params;
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
+import RotatingBanner from "./RotatingBanner.jsx";
 import Header from "./Header.jsx"
 
 
@@ -111,6 +112,7 @@ const Home = ({ userId }) => {
   return (
     <div className = "home-container">
       <Header/>
+      <RotatingBanner/>
       {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [], false, handelCardClick)}
       {renderStoryList("Top 20 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
       {Object.keys(trendingByGenre).map((genre) => (
