@@ -22,7 +22,6 @@ const Header = () => {
       <div className="header-right" ref={dropdownRef}>
         <img
           src="https://via.placeholder.com/30"
-          // alt="Profil"
           className="profile-icon"
           onClick={() => setIsOpen(!isOpen)}
         />
