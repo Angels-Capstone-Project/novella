@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Login from "./Login";
 import Signup from "./Signup";
+import Header from "./Header";
 import "./WelcomePage.css";
 
 const WelcomePage = () => {

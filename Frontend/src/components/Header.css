@@ -2,15 +2,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
-  background-color: #141414;
-  color: white;
-  font-size: 20px;
+  padding: 1.2rem 2rem;
+  background-color: #fff1f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: #ef4723;
   font-weight: bold;
-position:relative; 
-  top: 0;
   z-index: 1000;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
+.header-left{
+  font-size: 1.8rem;
+}
+
 
 @media (max-width: 600px){
     .header{
@@ -21,6 +27,6 @@ position:relative;
 .profile-icon {
   width: 30px;
   height: 30px;
-   border-radius: 50%; 
+  
 }
 }

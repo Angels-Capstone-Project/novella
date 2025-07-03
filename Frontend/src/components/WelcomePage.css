@@ -7,6 +7,9 @@ html,
     font-family: 'Segoe UI', sans-serif;
     background-color: white;
 }
+.welcome-page{
+    height: 100vh;
+}
 
 .welcome-header {
 display: flex;
@@ -17,7 +20,7 @@ background-color: #fff5f0;
 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 position: sticky;
 top: 0;
-z-index: 100;
+z-index: 1000;
 }
 
 .brand-name {
@@ -122,6 +125,7 @@ padding: 1.5rem;
 background-color: #fff5f0;
 color: #333;
 font-size: 0.9rem;
+
 }
 
 
