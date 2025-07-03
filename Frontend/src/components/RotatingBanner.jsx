@@ -28,7 +28,7 @@ const RotatingBanner = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerData.length);
-    }, 4000); 
+    }, 5000); 
     return () => clearInterval(interval);
   }, []);
 
