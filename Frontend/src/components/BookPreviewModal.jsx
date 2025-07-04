@@ -1,9 +1,12 @@
-import React from "react";
+import React, {useEffect, useState}from "react";
 import "./BookPreviewModal.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
   const navigate = useNavigate();
+  const [readingLists, setReadingList]= useState([]);
+  const userId = localStorage.getItem("userId");
 
   const handleStartReading =() => {
     navigate(`/read/${selectedBookId}`);
