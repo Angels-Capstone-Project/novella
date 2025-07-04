@@ -1,6 +1,8 @@
 import express from "express";
 import { PrismaClient } from "../generated/prisma/index.js";
 
+
+const prisma = new PrismaClient;
 const router = express.Router();
 
 
@@ -21,7 +23,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 router.post("/:listId/add-book", async (req, res) => {
   const { listId } = req.params;
   const { storyId } = req.body;
@@ -39,6 +40,27 @@ router.post("/:listId/add-book", async (req, res) => {
     res.status(200).json(update);
   } catch (err) {
     res.status(500).json({ error: "Could not add book to reading list." });
+  }
+});
+
+
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const lists = await prisma.readingList.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        story: true, 
+      },
+    });
+
+    res.status(200).json(lists);
+  } catch (err) {
+    console.error("Failed to fetch reading lists:", err);
+    res.status(500).json({ error: "Failed to fetch reading lists" });
   }
 });
 
