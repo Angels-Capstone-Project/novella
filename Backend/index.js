@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import storyRoutes from './routes/storyRoutes.js';
 import chapterRoutes from './routes/chapterRoutes.js';
+import libraryRoutes from './routes/libraryRoutes.js';
+import readingListRoutes from './routes/readingListRoutes.js';
+
 
 
 dotenv.config();
@@ -29,6 +32,8 @@ app.use(session({
 app.use(authRoutes);
 app.use('/', storyRoutes);
 app.use('/chapters', chapterRoutes);
+app.use("/library", libraryRoutes);
+app.use("/readingList", readingListRoutes);
 
 
 app.listen(PORT, () => {
