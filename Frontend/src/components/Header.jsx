@@ -32,7 +32,7 @@ const Header = () => {
           <div className="dropdown-menu">
             <button>Inbox</button>
             <button >Notifications </button>
-            <button>Library</button>
+            <button onClick={()=> navigate('/library')}>Library</button>
             <button>Language: English</button>
             <button>Help</button>
             <button>Settings</button>

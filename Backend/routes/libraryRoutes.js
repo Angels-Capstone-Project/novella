@@ -6,7 +6,6 @@ const prisma = new PrismaClient;
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  console.log("rceived body", req.body);
   const { userId, storyId } = req.body;
 
   try {
@@ -21,6 +20,26 @@ router.post("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not add book to library." });
+  }
+});
+
+router.get("/user/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const books = await prisma.library.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        story: true, 
+      },
+    });
+
+    res.status(200).json(books);
+  } catch (err) {
+    console.error("Failed to fetch library:", err);
+    res.status(500).json({ error: "Failed to fetch library" });
   }
 });
 
