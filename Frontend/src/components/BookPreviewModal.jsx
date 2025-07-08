@@ -28,7 +28,6 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
 
   const handleAddToLibrary = async () => {
     try {
-      console.log("sending to library", userId , "and", selectedBookId);
       await axios.post(`${BASE_URL}/library`, {
         userId,
         storyId: selectedBookId,
@@ -37,6 +36,26 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
     } catch (err) {
       console.error("Failed to add to library", err);
       alert("Failed to add to library.");
+    }
+  };
+
+  const handleLike = async (bookId) => {
+    try {
+      await axios.post(`${BASE_URL}/stories/${bookId}/like`, { userId });
+      alert("Book liked!");
+    } catch (err) {
+      console.error("Failed to like book", err);
+      alert("Failed to like book.");
+    }
+  };
+
+  const handleMarkAsRead = async (bookId) => {
+    try {
+      await axios.post(`${BASE_URL}/stories/${bookId}/read`, { userId });
+      alert("Book marked as read!");
+    } catch (err) {
+      console.error("Failed to mark book as read", err);
+      alert("Failed to mark book as read.");
     }
   };
 
@@ -49,6 +68,7 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
     } catch (err) {
       console.error("Failed to add to reading list", err);
       alert("Failed to add to reading list.");
+      fcrjkteiedrevjgfhheltekdvuuhkebe;
     }
   };
 
@@ -71,6 +91,10 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
               <div className="actions">
                 <button className="start-reading" onClick={handleStartReading}>
                   Start Reading
+                </button>
+                <button onClick={() => handleLike(book.id)}>❤️ Like</button>
+                <button onClick={() => handleMarkAsRead(book.id)}>
+                  ✅ Mark as Read
                 </button>
                 <button className="add-library" onClick={handleAddToLibrary}>
                   + Library

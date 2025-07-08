@@ -31,7 +31,7 @@ router.post("/:listId/add-book", async (req, res) => {
     const update = await prisma.readingList.update({
       where: { id: listId },
       data: {
-        stories: {
+        story: {
           connect: { id: storyId },
         },
       },

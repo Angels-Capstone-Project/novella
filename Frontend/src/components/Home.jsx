@@ -3,19 +3,28 @@ import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
 import RotatingBanner from "./RotatingBanner.jsx";
-import Header from "./Header.jsx"
+import Header from "./Header.jsx";
 
-
-const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller", "Drama", "Comedy", "horror"];
+const genres = [
+  "Romance",
+  "Fantasy",
+  "Mystery",
+  "Sci-Fi",
+  "Thriller",
+  "Drama",
+  "Comedy",
+  "horror",
+];
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
   const [topUS, setTopUS] = useState([]);
   const [trendingByGenre, setTrendingByGenre] = useState({});
-  const [showModal, setShowModal] =useState(false);
-  const [selectedBookId, setSelectedBookId] =useState(null);
-  const [booksInRow, setBooksInRow] =useState([]);
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [booksInRow, setBooksInRow] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchTopPicks = async () => {
@@ -35,8 +44,6 @@ const Home = ({ userId }) => {
         console.error("Error fetching top 10 in the US:", err);
       }
     };
-
-    
 
     const fetchTrendingByGenre = async () => {
       try {
@@ -61,10 +68,38 @@ const Home = ({ userId }) => {
     fetchTrendingByGenre();
   }, [userId]);
 
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      try {
+        if (searchQuery.trim() === "") {
+          setSearchResults([]);
+          return;
+        }
+
+        const res = await axios.get(`${BASE_URL}/search`, {
+          params: { query: searchQuery },
+        });
+
+        setSearchResults(res.data);
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    };
+
+    fetchSearchResults();
+  }, [searchQuery]);
+
   const renderStoryList = (title, stories, showNumber = false, onCardClick) => (
     <div>
       <h2>{title}</h2>
-      <div style={{ display: "flex", overflowX: "auto", gap: "10px", paddingBottom: "12px" }}>
+      <div
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: "10px",
+          paddingBottom: "12px",
+        }}
+      >
         {Array.isArray(stories) &&
           stories.map((story, index) => (
             <div
@@ -104,36 +139,62 @@ const Home = ({ userId }) => {
   );
 
   const handelCardClick = (bookId, rowBooks) => {
-        setSelectedBookId(bookId);
-        setBooksInRow(rowBooks);
-        setShowModal(true);
-    };
+    setSelectedBookId(bookId);
+    setBooksInRow(rowBooks);
+    setShowModal(true);
+  };
 
   return (
-    <div className = "home-container">
-      <Header/>
-      <RotatingBanner/>
-      {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [], false, handelCardClick)}
-      {renderStoryList("Top 20 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
+    <div className="home-container">
+      <Header />
+      <RotatingBanner />
+      <input
+        type="text"
+        placeholder="Search by title or author...."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="search-bar"
+      />
+      {searchQuery &&(
+        renderStoryList(
+          `Search Results for "${searchQuery}"`,
+          searchResults,
+          false,
+          handelCardClick
+        )
+      )}
+      {renderStoryList(
+        "Top Picks for You",
+        topPicks?.length ? topPicks : [],
+        false,
+        handelCardClick
+      )}
+      {renderStoryList(
+        "Top 20 in the U.S.",
+        topUS?.length ? topUS : [],
+        true,
+        handelCardClick
+      )}
       {Object.keys(trendingByGenre).map((genre) => (
         <div key={genre}>
           {renderStoryList(
             `Trending in ${genre}`,
-            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [], false, handelCardClick
+            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [],
+            false,
+            handelCardClick
           )}
         </div>
       ))}
 
       <footer className="welcome-footer">© 2025 Novella</footer>
 
-      { showModal && (
+      {showModal && (
         <BookPreviewModal
-        books={booksInRow}
-        selectedBookId={selectedBookId}
-        onClose={() => setShowModal(false)}
+          books={booksInRow}
+          selectedBookId={selectedBookId}
+          onClose={() => setShowModal(false)}
         />
-    )}
-    
+      )}
     </div>
   );
 };
