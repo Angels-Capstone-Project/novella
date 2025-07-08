@@ -8,6 +8,7 @@ import ReadingPage from "./components/ReadingPage";
 import "./App.css";
 import WelcomePage from "./components/WelcomePage";
 import LibraryPage from "./components/LibraryPage";
+import SearchResults from "./components/searchResults";
 
 const App=() => {
 
@@ -21,6 +22,7 @@ const App=() => {
         <Route path = "/home" element = {<Home userId={userId} />} />
         <Route path = "/read/:bookId" element = {<ReadingPage />} />
         <Route path = "/library" element={<LibraryPage />} />
+        <Route path ="/search" element= {<SearchResults />} />
 
       </Routes>
     </Router>

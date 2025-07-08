@@ -6,6 +6,13 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter" && query.trim()) {
+      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -20,7 +27,14 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-left">Novella</div>
-
+      <input
+        type="text"
+        placeholder="Search by title or author..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleSearch}
+        className="search-input"
+      />
       <div className="header-right" ref={dropdownRef}>
         <img
           src="https://via.placeholder.com/30"
@@ -31,8 +45,8 @@ const Header = () => {
         {isOpen && (
           <div className="dropdown-menu">
             <button>Inbox</button>
-            <button >Notifications </button>
-            <button onClick={()=> navigate('/library')}>Library</button>
+            <button>Notifications </button>
+            <button onClick={() => navigate("/library")}>Library</button>
             <button>Language: English</button>
             <button>Help</button>
             <button>Settings</button>
