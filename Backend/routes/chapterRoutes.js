@@ -68,4 +68,51 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, content, order, bannerImage } = req.body;
+
+  try {
+    const chapter = await prisma.chapter.update({
+      where: { id },
+      data: { title, content, order, bannerImage },
+    });
+
+    res.status(200).json(chapter);
+  } catch (error) {
+    console.error("Error updating chapter:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await prisma.chapter.delete({ where: { id } });
+    res.status(200).json({ message: "Chapter deleted." });
+  } catch (error) {
+    console.error("Error deleting chapter:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// to auto-save
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  try {
+    const chapter = await prisma.chapter.update({
+      where: { id },
+      data,
+    });
+
+    res.status(200).json(chapter);
+  } catch (error) {
+    console.error("Auto-save failed:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 export default router;
