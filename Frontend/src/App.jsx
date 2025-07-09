@@ -9,6 +9,8 @@ import "./App.css";
 import WelcomePage from "./components/WelcomePage";
 import LibraryPage from "./components/LibraryPage";
 import SearchResults from "./components/searchResults";
+import CreateStoryPage from "./components/CreateStoryPage";
+
 
 const App=() => {
 
@@ -23,6 +25,8 @@ const App=() => {
         <Route path = "/read/:bookId" element = {<ReadingPage />} />
         <Route path = "/library" element={<LibraryPage />} />
         <Route path ="/search" element= {<SearchResults />} />
+        <Route path ="/write/new" element= {<CreateStoryPage />} />
+
 
       </Routes>
     </Router>

@@ -7,6 +7,7 @@ const Header = () => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+  const [isWriteOpen, setIsWriteOpen] = useState(false);
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && query.trim()) {
@@ -35,6 +36,24 @@ const Header = () => {
         onKeyDown={handleSearch}
         className="search-input"
       />
+
+      <div className="write-dropdown">
+        <button
+          className="dropdown-toggle"
+          onClick={() => setIsWriteOpen(!isWriteOpen)}
+        >
+          Write ⌄
+        </button>
+        {isWriteOpen && (
+          <div className="dropdown-menu">
+            <button onClick={() => navigate("/write/new")}>
+              Create a New Story
+            </button>
+            <button onClick={() => navigate("/mystories")}>My Stories</button>
+          </div>
+        )}
+      </div>
+
       <div className="header-right" ref={dropdownRef}>
         <img
           src="https://via.placeholder.com/30"
