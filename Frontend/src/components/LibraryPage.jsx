@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./LibraryPage.css";
 import { BASE_URL } from "../utils/api";
+import Header from "./Header";
 
 const LibraryPage = () => {
   const [tab, setTab] = useState("current");
@@ -26,7 +27,10 @@ const LibraryPage = () => {
   }, []);
 
   return (
+    <>
+    <Header/>
     <div className="library-page">
+      
       <h1>Library</h1>
 
       <div className="tabs">
@@ -65,7 +69,10 @@ const LibraryPage = () => {
           ))}
         </div>
       )}
+
+      <footer className="welcome-footer">© 2025 Novella</footer>
     </div>
+    </>
   );
 };
 

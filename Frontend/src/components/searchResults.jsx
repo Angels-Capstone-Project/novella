@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { BASE_URL } from "../utils/api";
+import "./searchResults.css";
+import Header from "./Header";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -25,26 +27,31 @@ const SearchResults = () => {
   }, [query]);
 
   return (
-    <div className="search-results-container">
-      <h2>Search results for: “{query}”</h2>
-      <div className="results-grid">
+    <>
+    <Header/>
+    <div className="search-results-page">
+      <h2 className="results-heading">Search results for: “{query}”</h2>
+      <div className="results-list">
         {results.map((story) => (
-          <div key={story.id} className="story-card">
+          <div key={story.id} className="result-card">
             <img
-              src={story.coverImage || "https://via.placeholder.com/150"}
+              src={story.coverImage || "https://via.placeholder.com/100x150"}
               alt={story.title}
+              className="result-cover"
             />
-            <h3>{story.title}</h3>
-            <p>
-              <small>By {story.author?.username}</small>
-            </p>
-            <p>
-              <small>{story.genre}</small>
-            </p>
+            <div className="result-info">
+              <h3 className="result-title">{story.title}</h3>
+              <p className="result-author">by {story.author?.username}</p>
+              <p className="result-genre">{story.genre}</p>
+              <p className="result-snippet">
+                {story.description?.slice(0, 120)}...
+              </p>
+            </div>
           </div>
         ))}
       </div>
     </div>
+    </>
   );
 };
 
