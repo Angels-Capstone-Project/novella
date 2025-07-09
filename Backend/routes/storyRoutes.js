@@ -143,7 +143,6 @@ router.get("/users", async (req, res) => {
   }
 });
 
-//  Get full story info including author
 router.get("/stories/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -164,6 +163,34 @@ router.get("/stories/:id", async (req, res) => {
     res.status(200).json(story);
   } catch (error) {
     console.error("Error fetching story:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+// Search stories by title or author
+router.get("/stories", async (req, res) => {
+  const { query } = req.query;
+
+  try {
+    const stories = await prisma.story.findMany({
+      where: {
+        OR: [
+          { title: { contains: query, mode: "insensitive" } },
+          {
+            author: {
+              is: {
+                username: { contains: query, mode: "insensitive" },
+              },
+            },
+          },
+        ],
+      },
+      include: { author: true },
+    });
+
+    res.json(stories);
+  } catch (error) {
+    console.error("Search error:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 });
