@@ -46,7 +46,7 @@ export default function CreateStoryPage() {
       <h2 className="form-header">Story Details</h2>
 
       <form onSubmit={handleSubmit} className="story-form">
-        {/* Left column – Cover Upload */}
+       
         <div className="form-left">
           <label className="cover-label">Add a Cover</label>
           <input type="file" accept="image/*" onChange={handleCoverUpload} />
@@ -59,7 +59,7 @@ export default function CreateStoryPage() {
           )}
         </div>
 
-        {/* Right column – Fields */}
+        
         <div className="form-right">
           <div className="form-section">
             <label>Title</label>
