@@ -150,6 +150,7 @@ router.get("/stories/:id", async (req, res) => {
     const story = await prisma.story.findUnique({
       where: { id },
       include: {
+        chapters: true,
         author: {
           select: { username: true },
         },
@@ -192,6 +193,41 @@ router.get("/stories", async (req, res) => {
   } catch (error) {
     console.error("Search error:", error);
     res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+router.post("/stories", async (req, res) => {
+  const {
+    title,
+    description,
+    genre,
+    category,
+    audience,
+    rating,
+    status,
+    coverImage,
+    authorId,
+  } = req.body;
+
+  try {
+    const story = await prisma.story.create({
+      data: {
+        title,
+        description,
+        genre,
+        category,
+        audience,
+        rating,
+        status,
+        coverImage,
+        authorId,
+      },
+    });
+
+    res.status(201).json(story);
+  } catch (error) {
+    console.error("Error creating story:", error);
+    res.status(500).json({ error: "Failed to create story" });
   }
 });
 
