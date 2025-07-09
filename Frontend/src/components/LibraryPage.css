@@ -1,0 +1,52 @@
+.library-page {
+  padding: 24px;
+}
+
+.tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #888;
+}
+
+.tabs button.active {
+  border-bottom: 2px solid #f66;
+  color: black;
+  font-weight: bold;
+}
+
+.book-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.book-card {
+  width: 130px;
+  text-align: center;
+}
+
+.book-card img {
+  width: 100%;
+  border-radius: 4px;
+  height: 190px;
+  object-fit: cover;
+}
+
+.book-card h4 {
+  margin: 8px 0 4px;
+  font-size: 14px;
+}
+
+.book-card p {
+  font-size: 12px;
+  color: #666;
+}

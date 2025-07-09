@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import ReadingPage from "./components/ReadingPage";
 import "./App.css";
 import WelcomePage from "./components/WelcomePage";
+import LibraryPage from "./components/LibraryPage";
 
 const App=() => {
 
@@ -19,6 +20,8 @@ const App=() => {
         <Route path = "/login" element={<Login />} />
         <Route path = "/home" element = {<Home userId={userId} />} />
         <Route path = "/read/:bookId" element = {<ReadingPage />} />
+        <Route path = "/library" element={<LibraryPage />} />
+
       </Routes>
     </Router>
   );

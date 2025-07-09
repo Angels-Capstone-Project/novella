@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -30,7 +32,7 @@ const Header = () => {
           <div className="dropdown-menu">
             <button>Inbox</button>
             <button >Notifications </button>
-            <button>Library</button>
+            <button onClick={()=> navigate('/library')}>Library</button>
             <button>Language: English</button>
             <button>Help</button>
             <button>Settings</button>
