@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BASE_URL } from "../utils/api.js";
+import Header from "./Header.jsx";
 import "./ReadingPage.css";
 
 const dummyChapters = [
@@ -58,6 +59,7 @@ const ReadingPage = () => {
 
   return (
     <>
+    <Header/>
       {storyInfo && (
         <div className="story-banner">
           <img

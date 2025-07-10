@@ -150,6 +150,7 @@ router.get("/stories/:id", async (req, res) => {
     const story = await prisma.story.findUnique({
       where: { id },
       include: {
+        chapters: true,
         author: {
           select: { username: true },
         },
@@ -195,4 +196,85 @@ router.get("/stories", async (req, res) => {
   }
 });
 
+router.post("/stories", async (req, res) => {
+  const {
+    title,
+    description,
+    genre,
+    category,
+    audience,
+    rating,
+    status,
+    coverImage,
+    authorId,
+  } = req.body;
+
+  try {
+    const story = await prisma.story.create({
+      data: {
+        title,
+        description,
+        genre,
+        category,
+        audience,
+        rating,
+        status,
+        coverImage,
+        authorId,
+      },
+    });
+
+    res.status(201).json(story);
+  } catch (error) {
+    console.error("Error creating story:", error);
+    res.status(500).json({ error: "Failed to create story" });
+  }
+});
+
+//updating story
+router.put("/stories/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    title,
+    description,
+    genre,
+    category,
+    audience,
+    rating,
+    status,
+    coverImage,
+  } = req.body;
+
+  try {
+    const updated = await prisma.story.update({
+      where: { id },
+      data: {
+        title,
+        description,
+        genre,
+        category,
+        audience,
+        rating,
+        status,
+        coverImage,
+      },
+    });
+
+    res.json(updated);
+  } catch (error) {
+    console.error("Error updating story:", error);
+    res.status(500).json({ error: "Failed to update story" });
+  }
+});
+
+router.delete('/stories/:id', async(req, res)=>{
+  const {id} = req.params;
+  try{
+    await prisma.story.delete({where: {id}});
+    res.json({message: "Story deleted successfully"});
+  }catch(error){
+    console.error("Error deleting story:", error);
+    res.status(500).json({ error: "Failed to delete story" });
+  }
+})
 export default router;

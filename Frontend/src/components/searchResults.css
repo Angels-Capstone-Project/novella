@@ -1,0 +1,54 @@
+.search-results-page {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.results-heading {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.result-card {
+  display: flex;
+  gap: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fff5f0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.result-cover {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.result-info {
+  flex: 1;
+}
+
+.result-title {
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem;
+}
+
+.result-author,
+.result-genre {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.result-snippet {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  color: #333;
+}

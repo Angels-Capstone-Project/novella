@@ -1,11 +1,13 @@
 .library-page {
   padding: 24px;
+  background-color: white;
 }
 
 .tabs {
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
+
 }
 
 .tabs button {
@@ -15,6 +17,7 @@
   padding: 8px 12px;
   cursor: pointer;
   color: #888;
+  color: #ef4723;
 }
 
 .tabs button.active {
@@ -27,11 +30,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  
 }
 
 .book-card {
   width: 130px;
   text-align: center;
+  
 }
 
 .book-card img {
@@ -49,4 +54,5 @@
 .book-card p {
   font-size: 12px;
   color: #666;
+  
 }
