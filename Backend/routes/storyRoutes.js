@@ -9,17 +9,6 @@ const router = express.Router();
 router.post("/stories/:id/like", likeStory);
 router.post("/stories/:id/read", readStory);
 
-// const storage = multer.diskStorage({
-//   destination : (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + "-" +file.originalname);
-
-//   },
-// });
-// const upload = multer({storage});
-
 const upload = multer({ storage: multer.memoryStorage() });
 
 function sortStoriesByPopularity(stories, limit = 20) {

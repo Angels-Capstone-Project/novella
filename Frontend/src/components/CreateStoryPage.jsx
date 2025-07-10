@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./CreateStoryPage.css";
 import { BASE_URL } from "../utils/api";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateStoryPage() {
   const [coverImage, setCoverImage] = useState(null);
@@ -9,6 +10,8 @@ export default function CreateStoryPage() {
   const [description, setDescription] = useState("");
   const [genre, setgenre] = useState("");
   const [audience, setAudience] = useState("");
+
+  const navigate = useNavigate();
 
   const handleCoverUpload = (e) => {
     const file = e.target.files[0];
@@ -33,7 +36,7 @@ export default function CreateStoryPage() {
     formData.append("genre", genre);
     formData.append("audience", audience);
     if (file) formData.append("coverImage", file); 
-    formData.append("authorId", authorId); // ✅ 
+    formData.append("authorId", authorId); 
 
     try {
       const response = await axios.post(`${BASE_URL}/stories`, formData, {
@@ -42,9 +45,11 @@ export default function CreateStoryPage() {
         },
       });
 
-      console.log("Story created successfully!", response.data);
+      const result = await response.json();
+
+      console.log("Story created successfully!", result);
       alert("Story created!");
-      // Optional: redirect or reset form
+     
     } catch (error) {
       console.error("Error creating story:", error);
       alert("Failed to create story. Check console for more info.");
