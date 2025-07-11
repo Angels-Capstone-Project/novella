@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
+
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -49,7 +50,7 @@ const Header = () => {
             <button onClick={() => navigate("/write/new")}>
               Create a New Story
             </button>
-            <button onClick={() => navigate("/mystories")}>My Stories</button>
+            <button onClick={() => navigate("/my-stories")}>My Stories</button>
           </div>
         )}
       </div>

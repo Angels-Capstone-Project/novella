@@ -146,6 +146,21 @@ router.get("/users", async (req, res) => {
   }
 });
 
+// GET stories written by a specific user
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const stories = await prisma.story.findMany({
+      where: { authorId: userId },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(stories);
+  } catch (error) {
+    console.error("Error fetching user stories:", error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 router.get("/stories/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -200,14 +215,7 @@ router.get("/stories", async (req, res) => {
 });
 
 router.post("/stories", upload.single("coverImage"), async (req, res) => {
-  const {
-    title,
-    description,
-    genre,
-    audience,
-    status,
-    authorId, 
-  } = req.body;
+  const { title, description, genre, audience, status, authorId } = req.body;
 
   let coverImage = null;
   if (req.file) {
@@ -229,7 +237,7 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
         audience,
         status,
         coverImage,
-        authorId, 
+        authorId,
       },
     });
 
