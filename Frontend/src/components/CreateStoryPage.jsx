@@ -45,10 +45,9 @@ export default function CreateStoryPage() {
         },
       });
 
-      const result = await response.json();
-
-      console.log("Story created successfully!", result);
+      console.log("Story created successfully!", response.data);
       alert("Story created!");
+      navigate(`/write/${response.data.id}`);
      
     } catch (error) {
       console.error("Error creating story:", error);

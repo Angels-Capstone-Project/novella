@@ -1,0 +1,110 @@
+.write-container {
+max-width: 800px;
+margin: 0 auto;
+padding: 20px;
+font-family: "Segoe UI", sans-serif;
+}
+
+
+.story-header {
+display: flex;
+align-items: center;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+.story-cover-image {
+width: 60px;
+height: 80px;
+object-fit: cover;
+border-radius: 4px;
+}
+
+.story-title {
+font-size: 1.2rem;
+margin: 0;
+font-weight: bold;
+}
+
+.story-status {
+font-size: 0.85rem;
+color: gray;
+}
+
+/* Chapter banner */
+.chapter-banner {
+width: 100%;
+max-height: 180px;
+object-fit: cover;
+border-radius: 4px;
+margin: 20px 0;
+}
+
+
+.banner-upload input {
+width: 100%;
+padding: 8px 10px;
+margin-bottom: 15px;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+/* Chapter Title */
+.chapter-title-input {
+width: 100%;
+font-size: 1.5rem;
+font-weight: bold;
+padding: 10px;
+margin-bottom: 10px;
+border: none;
+border-bottom: 1px solid #ddd;
+outline: none;
+}
+
+
+.chapter-textarea {
+width: 100%;
+min-height: 300px;
+padding: 15px;
+font-size: 1rem;
+line-height: 1.6;
+border: 1px solid #ccc;
+border-radius: 4px;
+resize: vertical;
+}
+
+/* Buttons */
+.chapter-actions {
+margin-top: 20px;
+display: flex;
+gap: 10px;
+}
+
+.save-button,
+.preview-button,
+.publish-button {
+padding: 8px 16px;
+border: none;
+border-radius: 20px;
+font-size: 0.95rem;
+cursor: pointer;
+}
+
+.save-button {
+background-color: white;
+color: black;
+border: 1px solid #ccc;
+}
+
+.preview-button {
+background-color: white;
+color: black;
+border: 1px solid #ccc;
+}
+
+.publish-button {
+background-color: black;
+color: white;
+}
+
+

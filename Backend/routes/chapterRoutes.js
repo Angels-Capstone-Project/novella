@@ -6,20 +6,36 @@ const prisma = new PrismaClient();
 
 // Create a new chapter
 router.post("/", async (req, res) => {
-  const { title, content, order, storyId, bannerImage } = req.body;
+  const { title, content, storyId, bannerImage } = req.body;
 
-  if (!title || !content || order === undefined || !storyId) {
+  if (!title || !content || !storyId) {
     return res.status(400).json({ error: "Missing required fields." });
   }
 
   try {
-    const story = await prisma.story.findUnique({ where: { id: storyId } });
+    const story = await prisma.story.findUnique({
+      where: { id: storyId },
+    });
+
     if (!story) {
       return res.status(404).json({ error: "Story not found." });
     }
 
+    
+    const existingChapters = await prisma.chapter.count({
+      where: { storyId },
+    });
+
+    const order = existingChapters + 1;
+
     const chapter = await prisma.chapter.create({
-      data: { title, content, order, storyId, bannerImage },
+      data: {
+        title,
+        content,
+        order,
+        storyId,
+        bannerImage,
+      },
     });
 
     res.status(201).json({ message: "Chapter created successfully.", chapter });
@@ -67,7 +83,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
-
+//update a chapter
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title, content, order, bannerImage } = req.body;
