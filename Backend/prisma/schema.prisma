@@ -36,9 +36,7 @@ id     String    @id   @default(uuid())
 title    String
 description   String?
 genre   String
-category    String?
 audience      String?
-rating       String ?
 status     String    @default("draft")
 likedBy   User[]  @relation("LikedStories")
 readBy   User[]  @relation("ReadStories")

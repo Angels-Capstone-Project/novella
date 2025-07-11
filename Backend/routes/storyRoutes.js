@@ -1,12 +1,15 @@
 import { PrismaClient } from "../generated/prisma/index.js";
 import express from "express";
 import { likeStory, readStory } from "../controllers/storyController.js";
+import multer from "multer";
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post("/stories/:id/like", likeStory);
 router.post("/stories/:id/read", readStory);
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 function sortStoriesByPopularity(stories, limit = 20) {
   return stories
@@ -196,18 +199,26 @@ router.get("/stories", async (req, res) => {
   }
 });
 
-router.post("/stories", async (req, res) => {
+router.post("/stories", upload.single("coverImage"), async (req, res) => {
   const {
     title,
     description,
     genre,
-    category,
     audience,
-    rating,
     status,
-    coverImage,
-    authorId,
+    authorId, 
   } = req.body;
+
+  let coverImage = null;
+  if (req.file) {
+    coverImage = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
+      "base64"
+    )}`;
+  }
+
+  if (!authorId) {
+    return res.status(401).json({ error: "Unauthorized. Missing authorId." });
+  }
 
   try {
     const story = await prisma.story.create({
@@ -215,12 +226,10 @@ router.post("/stories", async (req, res) => {
         title,
         description,
         genre,
-        category,
         audience,
-        rating,
         status,
         coverImage,
-        authorId,
+        authorId, 
       },
     });
 
@@ -234,16 +243,7 @@ router.post("/stories", async (req, res) => {
 //updating story
 router.put("/stories/:id", async (req, res) => {
   const { id } = req.params;
-  const {
-    title,
-    description,
-    genre,
-    category,
-    audience,
-    rating,
-    status,
-    coverImage,
-  } = req.body;
+  const { title, description, genre, audience, status, coverImage } = req.body;
 
   try {
     const updated = await prisma.story.update({
@@ -252,9 +252,7 @@ router.put("/stories/:id", async (req, res) => {
         title,
         description,
         genre,
-        category,
         audience,
-        rating,
         status,
         coverImage,
       },
@@ -267,14 +265,14 @@ router.put("/stories/:id", async (req, res) => {
   }
 });
 
-router.delete('/stories/:id', async(req, res)=>{
-  const {id} = req.params;
-  try{
-    await prisma.story.delete({where: {id}});
-    res.json({message: "Story deleted successfully"});
-  }catch(error){
+router.delete("/stories/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.story.delete({ where: { id } });
+    res.json({ message: "Story deleted successfully" });
+  } catch (error) {
     console.error("Error deleting story:", error);
     res.status(500).json({ error: "Failed to delete story" });
   }
-})
+});
 export default router;

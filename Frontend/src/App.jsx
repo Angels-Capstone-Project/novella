@@ -10,6 +10,7 @@ import WelcomePage from "./components/WelcomePage";
 import LibraryPage from "./components/LibraryPage";
 import SearchResults from "./components/searchResults";
 import CreateStoryPage from "./components/CreateStoryPage";
+import WriteStoryPage from "./components/WriteStoryPage";
 
 
 const App=() => {
@@ -26,8 +27,7 @@ const App=() => {
         <Route path = "/library" element={<LibraryPage />} />
         <Route path ="/search" element= {<SearchResults />} />
         <Route path ="/write/new" element= {<CreateStoryPage />} />
-
-
+         <Route path ="/write/:id" element= {<WriteStoryPage />} />
       </Routes>
     </Router>
   );
