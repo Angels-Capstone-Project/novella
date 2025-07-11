@@ -31,6 +31,7 @@ const ReadingPage = () => {
       try {
         const res = await fetch(`${BASE_URL}/chapters/story/${bookId}`);
         if (!res.ok) throw new Error("Failed to fetch chapters");
+        
         const data = await res.json();
         setBackendChapters(data.chapters || []);
       } catch (err) {

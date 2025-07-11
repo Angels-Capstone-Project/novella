@@ -11,6 +11,7 @@ import LibraryPage from "./components/LibraryPage";
 import SearchResults from "./components/searchResults";
 import CreateStoryPage from "./components/CreateStoryPage";
 import WriteStoryPage from "./components/WriteStoryPage";
+import MyStories from "./components/MyStories";
 
 
 const App=() => {
@@ -27,7 +28,9 @@ const App=() => {
         <Route path = "/library" element={<LibraryPage />} />
         <Route path ="/search" element= {<SearchResults />} />
         <Route path ="/write/new" element= {<CreateStoryPage />} />
-         <Route path ="/write/:id" element= {<WriteStoryPage />} />
+        <Route path ="/write/:id" element= {<WriteStoryPage />} />
+        <Route path ="/my-stories" element= {<MyStories user={userId} />} />
+
       </Routes>
     </Router>
   );
