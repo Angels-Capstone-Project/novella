@@ -67,6 +67,8 @@ model Chapter {
   content  String
   order     Int 
   bannerImage    String?
+  isDraft    Boolean   @default(true)
+  isPublished    Boolean   @default(false)
   story   Story    @relation(fields: [storyId], references: [id])
   storyId   String
   createdAt  DateTime  @default(now())

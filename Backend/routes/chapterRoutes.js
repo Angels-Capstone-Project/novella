@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 
 // Create a new chapter
 router.post("/", async (req, res) => {
-  const { title, content, storyId, bannerImage } = req.body;
+  const { title, content, storyId, bannerImage, isDraft, isPublished } =
+    req.body;
 
   if (!title || !content || !storyId) {
     return res.status(400).json({ error: "Missing required fields." });
@@ -21,7 +22,6 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Story not found." });
     }
 
-    
     const existingChapters = await prisma.chapter.count({
       where: { storyId },
     });
@@ -35,6 +35,8 @@ router.post("/", async (req, res) => {
         order,
         storyId,
         bannerImage,
+        isDraft,
+        isPublished,
       },
     });
 
@@ -45,7 +47,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//  Get all chapters for a story
+//  Get all published chapters for a story
 router.get("/story/:storyId", async (req, res) => {
   const { storyId } = req.params;
 
@@ -56,7 +58,7 @@ router.get("/story/:storyId", async (req, res) => {
     }
 
     const chapters = await prisma.chapter.findMany({
-      where: { storyId },
+      where: { storyId, isPublished: true },
       orderBy: { order: "asc" },
     });
 
@@ -83,15 +85,36 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 });
+
+router.get("/drafts/:storyId", async (req, res) => {
+  const { storyId } = req.params;
+  try {
+    const drafts = await prisma.chapter.findMany({
+      where: {
+        storyId,
+        isDraft: true,
+      },
+      orderBy: {
+        order: "asc",
+      },
+    });
+
+    res.status(200).json(drafts);
+  } catch (err) {
+    console.error("Error fetching draft chapters:", err);
+    res.status(500).json({ error: "Internal server error." });
+  }
+});
+
 //update a chapter
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, content, order, bannerImage } = req.body;
+  const { title, content, order, bannerImage, isDraft, isPublished } = req.body;
 
   try {
     const chapter = await prisma.chapter.update({
       where: { id },
-      data: { title, content, order, bannerImage },
+      data: { title, content, order, bannerImage, isDraft, isPublished },
     });
 
     res.status(200).json(chapter);
