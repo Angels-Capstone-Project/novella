@@ -153,6 +153,14 @@ router.get("/user/:userId", async (req, res) => {
     const stories = await prisma.story.findMany({
       where: { authorId: userId },
       orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
+          select: {
+            likedBy: true,
+            readBy: true,
+          },
+        },
+      },
     });
     res.json(stories);
   } catch (error) {
@@ -216,6 +224,12 @@ router.get("/stories", async (req, res) => {
 
 router.post("/stories", upload.single("coverImage"), async (req, res) => {
   const { title, description, genre, audience, status, authorId } = req.body;
+
+  if(!title || !description || !genre|| !audience){
+    return res.status(400).json({error:"All fields are required"});
+
+  }
+  
 
   let coverImage = null;
   if (req.file) {

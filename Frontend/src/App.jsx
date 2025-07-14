@@ -29,6 +29,7 @@ const App=() => {
         <Route path ="/search" element= {<SearchResults />} />
         <Route path ="/write/new" element= {<CreateStoryPage />} />
         <Route path ="/write/:id" element= {<WriteStoryPage />} />
+         <Route path ="/write/:id/:chapterId" element= {<WriteStoryPage />} />
         <Route path ="/my-stories" element= {<MyStories user={userId} />} />
 
       </Routes>

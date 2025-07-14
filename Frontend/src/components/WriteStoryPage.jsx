@@ -6,10 +6,11 @@ import Header from "./Header";
 import "./WriteStoryPage.css";
 
 export default function WritePage() {
-  const { id } = useParams();
+  const { id, chapterId } = useParams();
   const [story, setStory] = useState(null);
+  const [chapter, setChapter] = useState(null);
   const [chapterTitle, setChapterTitle] = useState("Untitled Part ");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState("Hello World");
   const [banner, setBanner] = useState("");
 
   useEffect(() => {
@@ -22,25 +23,56 @@ export default function WritePage() {
       }
     };
 
+    const fetchChapter = async () => {
+      try {
+        const res = await axios.get(`${BASE_URL}/chapters/${chapterId}`);
+        const fetched= res.data;
+
+        if(!fetched){
+          console.warn("No chapter found. ");
+          return;
+        }
+        setChapter(fetched);
+        setChapterTitle(fetched.title || "");
+        setContent(fetched.content || "");
+        setBanner(fetched.bannerImage || "");
+      } catch (err) {
+        console.error("Error fetching chapter:", err);
+      }
+    };
     if (id) fetchStory();
-  }, [id]);
+    if (chapterId) fetchChapter();
+  }, [id, chapterId]);
 
   const handleChapterAction = async ({ isDraft, isPublished }) => {
     try {
-      await axios.post(`${BASE_URL}/chapters`, {
-        storyId: id,
+      if (!chapterTitle.trim() || !content.trim()) {
+        return alert(
+          "Please fill out chapter title and content before publishing."
+        );
+      }
+
+      const payload = {
         title: chapterTitle,
         content,
         bannerImage: banner,
         isDraft,
         isPublished,
-      });
+      };
+
+      if (chapterId) {
+        // Update existing chapter
+        await axios.put(`${BASE_URL}/chapters/${chapterId}`, payload);
+      } else {
+        // Create new chapter
+        await axios.post(`${BASE_URL}/chapters`, {
+          ...payload,
+          storyId: id,
+        });
+      }
 
       const action = isPublished ? "published" : "saved as draft";
       alert(`Chapter successfully ${action}!`);
-      if(isPublished && (!chapterTitle.trim() || !content.trim())){
-        return alert("Please fill out chapter title and content before publishing. ")
-      }
     } catch (err) {
       console.error("Error:", err);
       alert("Something went wrong.");
@@ -49,14 +81,12 @@ export default function WritePage() {
 
   const handlePreview = () => {
     alert("preview would open here!");
-  }
-
+  };
 
   return (
     <>
       <Header />
       <div className="write-container">
-        {/* Story Header */}
         <div className="story-header">
           {story?.coverImage && (
             <img
@@ -87,6 +117,7 @@ export default function WritePage() {
         </div>
 
         <input
+          type="text"
           value={chapterTitle}
           onChange={(e) => setChapterTitle(e.target.value)}
           placeholder="Chapter Title"
@@ -101,16 +132,27 @@ export default function WritePage() {
         />
 
         <div className="chapter-actions">
-          <button className="save-button" 
-          onClick={() => handleChapterAction({isDraft: true, isPublished: false})}>
+          <button
+            className="save-button"
+            onClick={() =>
+              handleChapterAction({ isDraft: true, isPublished: false })
+            }
+          >
             Save
           </button>
 
-          <button className="preview-button"
-          onClick={handlePreview}>Preview</button>
+          <button className="preview-button" onClick={handlePreview}>
+            Preview
+          </button>
 
-          <button className="publish-button"
-          onClick={() => handleChapterAction({isDraft: false, isPublished: true})}>Publish</button>
+          <button
+            className="publish-button"
+            onClick={() =>
+              handleChapterAction({ isDraft: false, isPublished: true })
+            }
+          >
+            Publish
+          </button>
         </div>
       </div>
     </>

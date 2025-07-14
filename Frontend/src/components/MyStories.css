@@ -1,82 +1,79 @@
 .my-stories-container {
-max-width: 800px;
-margin: 0 auto;
-padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .story-list {
-display: flex;
-flex-direction: column;
-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .story-card {
-display: flex;
-flex-direction: column;
-border: 1px solid #ccc;
-padding: 15px;
-background-color: #fff;
-border-radius: 8px;
-position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ccc;
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 8px;
+  position: relative;
 }
 
 .story-cover {
-width: 100%;
-max-height: 200px;
-object-fit: cover;
-border-radius: 4px;
-margin-bottom: 10px;
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
 .story-info {
-margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .story-info h3 {
-margin: 0 0 5px 0;
+  margin: 0 0 5px 0;
 }
 
 .story-controls {
-position: relative;
+  position: relative;
 }
 
 .continue-button {
-background-color: #ff6b00;
-color: white;
-padding: 8px 12px;
-border: none;
-cursor: pointer;
-border-radius: 5px;
-font-weight: bold;
+  background-color: #ff6b00;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
 }
 
 .draft-dropdown {
-position: absolute;
-top: 40px;
-left: 0;
-background-color: #ffffff;
-border: 1px solid #ddd;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-z-index: 999;
-width: max-content;
-min-width: 200px;
-border-radius: 4px;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  width: max-content;
+  min-width: 200px;
+  border-radius: 4px;
 }
 
 .draft-item {
-padding: 10px;
-cursor: pointer;
-transition: background-color 0.2s;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .draft-item:hover {
-background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .no-drafts {
-color: #888;
-font-style: italic;
+  color: #888;
+  font-style: italic;
 }
-
-
-

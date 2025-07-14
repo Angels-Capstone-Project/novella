@@ -22,6 +22,23 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Story not found." });
     }
 
+    if (isPublished && existingDraft) {
+      const updatedChapter = await prisma.chapter.update({
+        where: { id: existingDraft.id },
+        data: {
+          content,
+          bannerImage,
+          isDraft: false,
+          isPublished: true,
+        },
+      });
+
+      return res.status(200).json({
+        message: "Draft chapter published successfully.",
+        chapter: updatedChapter,
+      });
+    }
+
     const existingChapters = await prisma.chapter.count({
       where: { storyId },
     });
@@ -47,24 +64,26 @@ router.post("/", async (req, res) => {
   }
 });
 
-//  Get all published chapters for a story
-router.get("/story/:storyId", async (req, res) => {
+router.get("/all/:storyId", async (req, res) => {
   const { storyId } = req.params;
 
   try {
-    const story = await prisma.story.findUnique({ where: { id: storyId } });
+    const story = await prisma.story.findUnique({
+      where: { id: storyId },
+    });
+
     if (!story) {
       return res.status(404).json({ error: "Story not found." });
     }
 
     const chapters = await prisma.chapter.findMany({
-      where: { storyId, isPublished: true },
+      where: { storyId },
       orderBy: { order: "asc" },
     });
 
-    res.status(200).json({ chapters });
+    res.status(200).json(chapters);
   } catch (error) {
-    console.error("Error fetching chapters:", error);
+    console.error("Error fetching all chapters:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 });
@@ -72,36 +91,18 @@ router.get("/story/:storyId", async (req, res) => {
 // Get one chapter
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
+  console.log("Fetching chapter with id: ", id);
 
   try {
     const chapter = await prisma.chapter.findUnique({ where: { id } });
+    console.log("Found chapter: ", chapter);
     if (!chapter) {
       return res.status(404).json({ error: "Chapter not found." });
     }
 
     res.status(200).json({ chapter });
   } catch (error) {
-    console.error("Error fetching chapter:", error);
-    res.status(500).json({ error: "Internal server error." });
-  }
-});
-
-router.get("/drafts/:storyId", async (req, res) => {
-  const { storyId } = req.params;
-  try {
-    const drafts = await prisma.chapter.findMany({
-      where: {
-        storyId,
-        isDraft: true,
-      },
-      orderBy: {
-        order: "asc",
-      },
-    });
-
-    res.status(200).json(drafts);
-  } catch (err) {
-    console.error("Error fetching draft chapters:", err);
+    console.error("Error fetching chapter:", err.message, err.stack);
     res.status(500).json({ error: "Internal server error." });
   }
 });
