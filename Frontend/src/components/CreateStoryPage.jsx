@@ -21,7 +21,7 @@ export default function CreateStoryPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const authorId = localStorage.getItem("userId"); 
+    const authorId = localStorage.getItem("userId");
     if (!authorId) {
       alert("You must be logged in to create a story.");
       return;
@@ -35,23 +35,26 @@ export default function CreateStoryPage() {
     formData.append("description", description);
     formData.append("genre", genre);
     formData.append("audience", audience);
-    if (file) formData.append("coverImage", file); 
-    formData.append("authorId", authorId); 
+    if (file) formData.append("coverImage", file);
+    formData.append("authorId", authorId);
 
     try {
       const response = await axios.post(`${BASE_URL}/stories`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data", 
+          "Content-Type": "multipart/form-data",
         },
       });
 
       console.log("Story created successfully!", response.data);
       alert("Story created!");
       navigate(`/write/${response.data.id}`);
-     
     } catch (error) {
       console.error("Error creating story:", error);
-      alert("Failed to create story. Check console for more info.");
+      if (error.response && error.response.data && error.response.data.error) {
+        alert(error.response.data.error);
+      } else {
+        alert("Failed to create story. Check console for more info.");
+      }
     }
   };
 

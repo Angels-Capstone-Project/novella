@@ -28,7 +28,12 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="header-left">Novella</div>
+      <div className="header-left"
+        onClick={()=>navigate("/home")}
+        style={{cursor:"pointer"}}
+        >
+        Novella
+        </div>
       <input
         type="text"
         placeholder="Search by title or author..."

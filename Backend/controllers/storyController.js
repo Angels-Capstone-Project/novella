@@ -13,8 +13,13 @@ export const likeStory = async (req, res) => {
           connect: { id: userId },
         },
       },
+      include: {
+        _count:{
+          select:{likedBy:true},
+        },
+      },
     });
-    res.status(200).json({ message: "Story liked", story: updated });
+    res.status(200).json({ message: "Story liked", story: updated, likeCount: updated._count.likedBy, });
   } catch (error) {
     res.status(500).json({ error: "Error liking story" });
   }
