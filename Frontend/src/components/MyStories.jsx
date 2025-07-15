@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/api.js";
 import "./MyStories.css";
+import Header from "./Header.jsx";
 
 const MyStories = ({ user }) => {
   const [stories, setStories] = useState([]);
@@ -28,6 +29,14 @@ const MyStories = ({ user }) => {
 
   const handleEdit = (storyId, chapterId) => {
     navigate(`/write/${storyId}/${chapterId}`);
+  };
+
+  const handleNextPart = async (storyId, nextOrder) => {
+    try {
+      navigate(`/write/${storyId}`);
+    } catch (err) {
+      console.error("Error creating next part:", err);
+    }
   };
 
   const handleDeleteChapter = async (chapterId, storyId) => {
@@ -67,6 +76,8 @@ const MyStories = ({ user }) => {
   };
 
   return (
+    <>
+    <Header/>
     <div className="my-stories-container">
       <h2>My Stories</h2>
       {stories.length === 0 ? (
@@ -119,7 +130,14 @@ const MyStories = ({ user }) => {
                       <div className="draft-item no-drafts">
                         No chapters found
                       </div>
-                    )}
+                    )
+                    }
+                    <button
+                      onClick={() => handleNextPart(story.id)}
+                      className="next-part-button"
+                    >
+                      ➕ New Part
+                    </button>
                   </div>
                 )}
               </div>
@@ -128,6 +146,7 @@ const MyStories = ({ user }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
