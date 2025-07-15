@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/api.js";
 import "./MyStories.css";
 import Header from "./Header.jsx";
+import { FaTrash } from "react-icons/fa";
 
 const MyStories = ({ user }) => {
   const [stories, setStories] = useState([]);
@@ -56,6 +57,21 @@ const MyStories = ({ user }) => {
     }
   };
 
+  const handleDeleteStory = async (storyId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/stories/${storyId}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Failed to delete story");
+
+      // Remove story from UI
+      setStories((prev) => prev.filter((story) => story.id !== storyId));
+    } catch (err) {
+      console.error("Error deleting story:", err);
+    }
+  };
+
   const handleToggleDropdown = async (storyId) => {
     if (openDropdown === storyId) {
       setOpenDropdown(null);
@@ -77,75 +93,84 @@ const MyStories = ({ user }) => {
 
   return (
     <>
-    <Header/>
-    <div className="my-stories-container">
-      <h2>My Stories</h2>
-      {stories.length === 0 ? (
-        <p>You haven't written any stories yet.</p>
-      ) : (
-        <div className="story-list">
-          {stories.map((story) => (
-            <div key={story.id} className="story-card">
-              <img src={story.coverImage} alt="Cover" className="story-cover" />
-              <div className="story-info">
-                <h3>{story.title}</h3>
-                <p>{story.description?.slice(0, 80)}...</p>
-                <p>{story._count?.likedBy || 0} likes</p>
-              </div>
-              <div className="story-controls">
-                <button
-                  className="continue-button"
-                  onClick={() => handleToggleDropdown(story.id)}
-                >
-                  Continue writing ▼
-                </button>
+      <Header />
+      <div className="my-stories-container">
+        <h2>My Stories</h2>
+        {stories.length === 0 ? (
+          <p>You haven't written any stories yet.</p>
+        ) : (
+          <div className="story-list">
+            {stories.map((story) => (
+              <div key={story.id} className="story-card">
+                <img
+                  src={story.coverImage}
+                  alt="Cover"
+                  className="story-cover"
+                />
+                <div className="story-info">
+                  <h3>{story.title}</h3>
+                  <button
+                    onClick={() => handleDeleteStory(story.id)}
+                    className="delete-btn"
+                  >
+                    <FaTrash />
+                  </button>
+                  <p>{story.description?.slice(0, 80)}...</p>
+                  <p>{story._count?.likedBy || 0} likes</p>
+                </div>
+                <div className="story-controls">
+                  <button
+                    className="continue-button"
+                    onClick={() => handleToggleDropdown(story.id)}
+                  >
+                    Continue writing ▼
+                  </button>
 
-                {openDropdown === story.id && (
-                  <div className="draft-dropdown">
-                    {Array.isArray(chaptersMap[story.id]) &&
-                    chaptersMap[story.id].length > 0 ? (
-                      chaptersMap[story.id].map((chapter) => (
-                        <div key={chapter.id} className="draft-item">
-                          <span>
-                            Chapter {chapter.order} – {chapter.title} (
-                            {chapter.isDraft ? "Draft" : "Published"})
-                          </span>
-                          <div className="draft-actions">
-                            <button
-                              onClick={() => handleEdit(story.id, chapter.id)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleDeleteChapter(chapter.id, story.id)
-                              }
-                            >
-                              Delete
-                            </button>
+                  {openDropdown === story.id && (
+                    <div className="draft-dropdown">
+                      {Array.isArray(chaptersMap[story.id]) &&
+                      chaptersMap[story.id].length > 0 ? (
+                        chaptersMap[story.id].map((chapter) => (
+                          <div key={chapter.id} className="draft-item">
+                            <span>
+                              Chapter {chapter.order} – {chapter.title} (
+                              {chapter.isDraft ? "Draft" : "Published"})
+                            </span>
+                            <div className="draft-actions">
+                              <button
+                                onClick={() => handleEdit(story.id, chapter.id)}
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleDeleteChapter(chapter.id, story.id)
+                                }
+                              >
+                                Delete
+                              </button>
+                            </div>
                           </div>
+                        ))
+                      ) : (
+                        <div className="draft-item no-drafts">
+                          No chapters found
                         </div>
-                      ))
-                    ) : (
-                      <div className="draft-item no-drafts">
-                        No chapters found
-                      </div>
-                    )
-                    }
-                    <button
-                      onClick={() => handleNextPart(story.id)}
-                      className="next-part-button"
-                    >
-                      ➕ New Part
-                    </button>
-                  </div>
-                )}
+                      )}
+                      <button
+                        onClick={() => handleNextPart(story.id)}
+                        className="next-part-button"
+                      >
+                        ➕ New Part
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
     </>
   );
 };
