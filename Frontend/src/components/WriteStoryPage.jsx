@@ -9,8 +9,8 @@ export default function WritePage() {
   const { id, chapterId } = useParams();
   const [story, setStory] = useState(null);
   const [chapter, setChapter] = useState(null);
-  const [chapterTitle, setChapterTitle] = useState("Untitled Part ");
-  const [content, setContent] = useState("Hello World");
+  const [chapterTitle, setChapterTitle] = useState("");
+  const [content, setContent] = useState("");
   const [banner, setBanner] = useState("");
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function WritePage() {
     const fetchChapter = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/chapters/${chapterId}`);
-        const fetched= res.data;
+        const fetched= res.data.chapter;
 
         if(!fetched){
           console.warn("No chapter found. ");
@@ -34,8 +34,11 @@ export default function WritePage() {
         }
         setChapter(fetched);
         setChapterTitle(fetched.title || "");
+        
         setContent(fetched.content || "");
+        console.log("Content stuff ",fetched.content);
         setBanner(fetched.bannerImage || "");
+        console.log("Fetched data: " , fetched);
       } catch (err) {
         console.error("Error fetching chapter:", err);
       }
@@ -83,6 +86,9 @@ export default function WritePage() {
     alert("preview would open here!");
   };
 
+  console.log("title:", chapterTitle);
+console.log("content:", content);
+
   return (
     <>
       <Header />
@@ -117,7 +123,6 @@ export default function WritePage() {
         </div>
 
         <input
-          type="text"
           value={chapterTitle}
           onChange={(e) => setChapterTitle(e.target.value)}
           placeholder="Chapter Title"

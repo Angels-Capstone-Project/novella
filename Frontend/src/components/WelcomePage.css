@@ -1,132 +1,128 @@
 body,
 html,
 #root {
-    margin: 0;
-    padding: 0;
-    width: 100%; 
-    height: 100%;
-    font-family: 'Segoe UI', sans-serif;
-    background-color: white;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: "Segoe UI", sans-serif;
+  background-color: white;
 }
-.welcome-page{
-    height: 100vh;
+.welcome-page {
+  height: 100vh;
 }
 
 .welcome-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-padding: 1.2rem 2rem;
-background-color: #fff5f0;
-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-position: sticky;
-top: 0;
-z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 2rem;
+  background-color: #fff5f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .brand-name {
-font-size: 1.8rem;
-font-weight: 700;
-color: #ef4723;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ef4723;
 }
 
 .auth-buttons button {
-margin-left: 1rem;
-padding: 0.5rem 1rem;
-background-color: white;
-border: 1px solid #ef4723;
-color: #ef4723;
-font-weight: 600;
-border-radius: 5px;
-cursor: pointer;
-transition: all 0.3s ease;
+  margin-left: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #ef4723;
+  color: #ef4723;
+  font-weight: 600;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .auth-buttons button:hover {
-background-color: #ef4723;
-color: white;
+  background-color: #ef4723;
+  color: white;
 }
 
-
 .welcome-main {
-text-align: center;
-padding: 5rem 2rem 3rem;
-background-color: white;
+  text-align: center;
+  padding: 5rem 2rem 3rem;
+  background-color: white;
 }
 
 .welcome-text h1 {
-font-size: 3rem;
-color: #ef4723;
-margin-bottom: 1rem;
+  font-size: 3rem;
+  color: #ef4723;
+  margin-bottom: 1rem;
 }
 
 .welcome-text p {
-font-size: 1.2rem;
-color: #333;
-margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 2rem;
 }
 
 .cta-buttons button {
-margin: 0 0.7rem;
-padding: 0.8rem 1.5rem;
-background-color: #ef4723;
-color: white;
-font-weight: bold;
-border: none;
-border-radius: 6px;
-cursor: pointer;
-transition: background 0.3s ease;
+  margin: 0 0.7rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #ef4723;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .cta-buttons button:hover {
-background-color: #d93b1f;
+  background-color: #d93b1f;
 }
 
 .how-it-works {
-padding: 4rem 2rem;
-background-color: #fff8f4;
-text-align: center;
+  padding: 4rem 2rem;
+  background-color: #fff8f4;
+  text-align: center;
 }
 
 .how-it-works h2 {
-font-size: 2.2rem;
-color: #ef4723;
-margin-bottom: 2rem;
+  font-size: 2.2rem;
+  color: #ef4723;
+  margin-bottom: 2rem;
 }
 
 .steps {
-display: flex;
-justify-content: center;
-gap: 2rem;
-flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .step {
-max-width: 280px;
-background: white;
-padding: 1.5rem;
-border-radius: 10px;
-box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  max-width: 280px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
 }
 
 .step h3 {
-font-size: 1.3rem;
-color: #ef4723;
-margin-bottom: 1rem;
+  font-size: 1.3rem;
+  color: #ef4723;
+  margin-bottom: 1rem;
 }
 
 .step p {
-font-size: 1rem;
-color: #555;
+  font-size: 1rem;
+  color: #555;
 }
 /*footer*/
 .welcome-footer {
-text-align: center;
-padding: 1.5rem;
-background-color: white;
-color: #333;
-font-size: 0.9rem;
-
+  text-align: center;
+  padding: 1.5rem;
+  background-color: white;
+  color: #333;
+  font-size: 0.9rem;
 }
-
-

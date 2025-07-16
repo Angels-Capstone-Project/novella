@@ -77,3 +77,11 @@
   color: #888;
   font-style: italic;
 }
+
+.next-part-button {
+margin-top: 10px;
+background-color: #f4f4f4;
+border: 1px dashed #aaa;
+padding: 6px 10px;
+cursor: pointer;
+}

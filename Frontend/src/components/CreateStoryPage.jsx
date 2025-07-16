@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./CreateStoryPage.css";
 import { BASE_URL } from "../utils/api";
+import Header from "./Header.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+
 
 export default function CreateStoryPage() {
   const [coverImage, setCoverImage] = useState(null);
@@ -59,6 +61,8 @@ export default function CreateStoryPage() {
   };
 
   return (
+    <>
+    <Header/>
     <div className="create-story-container">
       <h2 className="form-header">Story Details</h2>
 
@@ -124,5 +128,6 @@ export default function CreateStoryPage() {
         </div>
       </form>
     </div>
+    </>
   );
 }

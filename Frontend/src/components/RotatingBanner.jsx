@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./RotatingBanner.css";
 
 const bannerData = [
@@ -23,6 +24,7 @@ const bannerData = [
 ];
 
 const RotatingBanner = () => {
+  const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const RotatingBanner = () => {
       <div className="banner-content">
         <h2>{title}</h2>
         <p>{description}</p>
-        <button className="read-now-button">READ NOW</button>
+        <button className="read-now-button" onClick={()=>navigate("/read/:bookId")}>READ NOW</button>
       </div>
     </div>
   );

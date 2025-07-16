@@ -29,11 +29,11 @@ const ReadingPage = () => {
   useEffect(() => {
     const fetchChapters = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/chapters/story/${bookId}`);
+        const res = await fetch(`${BASE_URL}/chapters/all/${bookId}`);
         if (!res.ok) throw new Error("Failed to fetch chapters");
         
         const data = await res.json();
-        setBackendChapters(data.chapters || []);
+        setBackendChapters((data || []).filter(ch =>ch.isDraft===false));
       } catch (err) {
         console.error("Error fetching chapters:", err);
       } finally {
