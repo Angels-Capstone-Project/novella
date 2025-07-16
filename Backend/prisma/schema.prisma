@@ -95,3 +95,12 @@ model ReadingList{
   createdAt  DateTime  @default(now())
 
 }
+
+model HomeCache {
+  id      String    @id @default(uuid())
+  userId    String    @unique
+  topPicks    Json?
+  topUS     Json?
+  genres      Json?
+  trendingByGenre     Json?
+}
