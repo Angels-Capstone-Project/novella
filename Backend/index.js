@@ -17,8 +17,8 @@ dotenv.config();
 const app= express();
 const PORT = process.env.PORT || 3000
 
-app.use(bodyParser.json({ limit: '90mb' }));
-app.use(bodyParser.urlencoded({ extended: true, limit: '90mb' }));
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }));
 
 
 app.use(cors({

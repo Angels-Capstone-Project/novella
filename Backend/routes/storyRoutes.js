@@ -278,6 +278,36 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
   }
 });
 
+router.get("/genre-all", async (req, res) => {
+  try {
+    const genres = [
+      "romance",
+      "thriller",
+      "comedy",
+      "horror",
+      "drama",
+      "mystery",
+      "sci-fi",
+      "fantasy",
+    ];
+    const genreData = {};
+
+    for (const genre of genres) {
+      const stories = await prisma.story.findMany({
+        where: { genre },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      });
+      genreData[genre] = stories;
+    }
+
+    res.json(genreData);
+  } catch (err) {
+    console.error("Failed to fetch genre data:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 //updating story
 router.put("/stories/:id", async (req, res) => {
   const { id } = req.params;
