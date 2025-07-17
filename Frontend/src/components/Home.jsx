@@ -3,68 +3,109 @@ import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
 import RotatingBanner from "./RotatingBanner.jsx";
-import Header from "./Header.jsx"
-
-
-const genres = ["Romance", "Fantasy", "Mystery", "Sci-Fi", "Thriller", "Drama", "Comedy", "horror"];
+import Header from "./Header.jsx";
+import { setCache, getCache, clearCache } from "../utils/cache.js";
+import { fetchWithCache } from "../utils/fetchWithCache";
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
+  const [genres, setGenres] = useState([]);
   const [topUS, setTopUS] = useState([]);
   const [trendingByGenre, setTrendingByGenre] = useState({});
-  const [showModal, setShowModal] =useState(false);
-  const [selectedBookId, setSelectedBookId] =useState(null);
-  const [booksInRow, setBooksInRow] =useState([]);
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
+  const [booksInRow, setBooksInRow] = useState([]);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [hasReloadedOnline, sethasReloadedOnline] = useState(false);
 
   useEffect(() => {
-    const fetchTopPicks = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/top-picks/${userId}`);
-        setTopPicks(res.data);
-      } catch (err) {
-        console.error("Error fetching top picks:", err);
-      }
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
     };
+  }, []);
 
-    const fetchTopUS = async () => {
-      try {
-        const res = await axios.get(`${BASE_URL}/top-us`);
-        setTopUS(res.data);
-      } catch (err) {
-        console.error("Error fetching top 10 in the US:", err);
-      }
-    };
-
-    
-
-    const fetchTrendingByGenre = async () => {
-      try {
-        const results = await Promise.all(
-          genres.map(async (genre) => {
-            const res = await axios.get(`${BASE_URL}/genre/${genre}`);
-            return { genre, stories: res.data };
-          })
-        );
-        const genreData = {};
-        results.forEach(({ genre, stories }) => {
-          genreData[genre] = stories;
+  useEffect(
+    () => {
+      if (!userId) return;
+      {
+        fetchWithCache({
+          cacheKey: "topPicks",
+          getUrl: `${BASE_URL}/top-picks/${userId}`,
+          postUrl: `${BASE_URL}/topPicks/${userId}`,
+          setState: setTopPicks,
+          postPayload: { topPicks: topPicks },
+          isOnline,
         });
-        setTrendingByGenre(genreData);
-      } catch (err) {
-        console.error("Error fetching trending stories by genre:", err);
+
+        fetchWithCache({
+          cacheKey: "topUS",
+          getUrl: `${BASE_URL}/top-us`,
+          postUrl: `${BASE_URL}/topUs/${userId}`,
+          setState: setTopUS,
+          postPayload: { topUS: topUS },
+          isOnline,
+        });
+
+        fetchWithCache({
+          cacheKey: "genres",
+          getUrl: `${BASE_URL}/genres`,
+          postUrl: `${BASE_URL}/genres/${userId}`,
+          setState: setGenres,
+          postPayload: { genres: genres },
+          isOnline,
+        });
+      }
+    },
+    [userId,isOnline],
+    
+  );
+
+  useEffect(() => {
+    if (!userId) return;
+
+    fetchWithCache({
+      cacheKey: "trendingByGenre",
+      getUrl: `${BASE_URL}/genre-all`,
+      postUrl: `${BASE_URL}/trendingByGenre/${userId}`,
+      postPayload: { trendingByGenre: trendingByGenre },
+      setState: setTrendingByGenre,
+      isOnline,
+    });
+  }, [userId, isOnline]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      if (!hasReloadedOnline) {
+        clearCache().then(() => {
+          sethasReloadedOnline(true);
+          window.location.reload();
+        });
       }
     };
 
-    fetchTopPicks();
-    fetchTopUS();
-    fetchTrendingByGenre();
-  }, [userId]);
+    window.addEventListener("online", handleOnline);
+    return () => window.removeEventListener("online", handleOnline);
+  }, [hasReloadedOnline]);
+
 
   const renderStoryList = (title, stories, showNumber = false, onCardClick) => (
     <div>
       <h2>{title}</h2>
-      <div style={{ display: "flex", overflowX: "auto", gap: "10px", paddingBottom: "12px" }}>
+      <div
+        style={{
+          display: "flex",
+          overflowX: "auto",
+          gap: "10px",
+          paddingBottom: "12px",
+        }}
+      >
         {Array.isArray(stories) &&
           stories.map((story, index) => (
             <div
@@ -104,36 +145,60 @@ const Home = ({ userId }) => {
   );
 
   const handelCardClick = (bookId, rowBooks) => {
-        setSelectedBookId(bookId);
-        setBooksInRow(rowBooks);
-        setShowModal(true);
-    };
+    setSelectedBookId(bookId);
+    setBooksInRow(rowBooks);
+    setShowModal(true);
+  };
 
   return (
-    <div className = "home-container">
-      <Header/>
-      <RotatingBanner/>
-      {renderStoryList("Top Picks for You", topPicks?.length ? topPicks : [], false, handelCardClick)}
-      {renderStoryList("Top 20 in the U.S.", topUS?.length ? topUS : [], true, handelCardClick)}
+    <div className="home-container">
+      {!isOnline && (
+        <div
+          style={{
+            background: "#ffcccc",
+            color: "#990000",
+            textAlign: "center",
+            padding: "10px",
+            fontWeight: "bold",
+          }}
+        >
+          ⚠️ You’re offline. Some features may not work properly.
+        </div>
+      )}
+      <Header />
+      <RotatingBanner />
+      {renderStoryList(
+        "Top Picks for You",
+        topPicks?.length ? topPicks : [],
+        false,
+        handelCardClick
+      )}
+      {renderStoryList(
+        "Top 20 in the U.S.",
+        topUS?.length ? topUS : [],
+        true,
+        handelCardClick
+      )}
       {Object.keys(trendingByGenre).map((genre) => (
         <div key={genre}>
           {renderStoryList(
             `Trending in ${genre}`,
-            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [], false, handelCardClick
+            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [],
+            false,
+            handelCardClick
           )}
         </div>
       ))}
 
       <footer className="welcome-footer">© 2025 Novella</footer>
 
-      { showModal && (
+      {showModal && (
         <BookPreviewModal
-        books={booksInRow}
-        selectedBookId={selectedBookId}
-        onClose={() => setShowModal(false)}
+          books={booksInRow}
+          selectedBookId={selectedBookId}
+          onClose={() => setShowModal(false)}
         />
-    )}
-    
+      )}
     </div>
   );
 };

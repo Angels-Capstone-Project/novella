@@ -21,6 +21,24 @@ function sortStoriesByPopularity(stories, limit = 20) {
     .slice(0, limit);
 }
 
+router.get("/genres", async (req, res) => {
+  try {
+    const genres = await prisma.story.findMany({
+      distinct: ["genre"],
+      select: { genre: true },
+    });
+
+    const genreList = genres
+      .map((g) => g.genre)
+      .filter((g) => g !== null && g !== "");
+
+    res.status(200).json(genreList);
+  } catch (error) {
+    console.error("Error fetching genres:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/top-picks/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -225,11 +243,9 @@ router.get("/stories", async (req, res) => {
 router.post("/stories", upload.single("coverImage"), async (req, res) => {
   const { title, description, genre, audience, status, authorId } = req.body;
 
-  if(!title || !description || !genre|| !audience){
-    return res.status(400).json({error:"All fields are required"});
-
+  if (!title || !description || !genre || !audience) {
+    return res.status(400).json({ error: "All fields are required" });
   }
-  
 
   let coverImage = null;
   if (req.file) {
@@ -259,6 +275,36 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
   } catch (error) {
     console.error("Error creating story:", error);
     res.status(500).json({ error: "Failed to create story" });
+  }
+});
+
+router.get("/genre-all", async (req, res) => {
+  try {
+    const genres = [
+      "romance",
+      "thriller",
+      "comedy",
+      "horror",
+      "drama",
+      "mystery",
+      "sci-fi",
+      "fantasy",
+    ];
+    const genreData = {};
+
+    for (const genre of genres) {
+      const stories = await prisma.story.findMany({
+        where: { genre },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      });
+      genreData[genre] = stories;
+    }
+
+    res.json(genreData);
+  } catch (err) {
+    console.error("Failed to fetch genre data:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
