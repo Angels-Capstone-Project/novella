@@ -55,7 +55,7 @@ const Home = ({ userId }) => {
 
         fetchWithCache({
           cacheKey: "genres",
-          getUrl: `${BASE_URL}/genres`,
+          getUrl: `${BASE_URL}/genre-all`,
           postUrl: `${BASE_URL}/genres/${userId}`,
           setState: setGenres,
           postPayload: { genres: genres },

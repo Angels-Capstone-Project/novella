@@ -64,6 +64,27 @@ router.post("/", async (req, res) => {
   }
 });
 
+// POST /chapters/save-draft
+router.post("/save-draft", async (req, res) => {
+  const { chapterId, storyId, title, content, authorId } = req.body;
+  try {
+    const updatedDraft = await prisma.chapter.upsert({
+      where: { id: chapterId },
+      update: { title, content },
+      create: {
+        storyId,
+        title,
+        content,
+        authorId,
+        isDraft: true,
+      },
+    });
+    res.json(updatedDraft);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to save draft" });
+  }
+});
+
 router.get("/all/:storyId", async (req, res) => {
   const { storyId } = req.params;
 
@@ -152,6 +173,47 @@ router.patch("/:id", async (req, res) => {
   } catch (error) {
     console.error("Auto-save failed:", error);
     res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+router.post("/sync/:storyId", async (req, res) => {
+  const { storyId } = req.params;
+  const chapters = req.body;
+
+  if (!Array.isArray(chapters)) {
+    return res.status(400).json({ error: "Invalid chapter payload" });
+  }
+
+  try {
+    const upsertedChapters = await Promise.all(
+      chapters.map((chapter) =>
+        prisma.chapter.upsert({
+          where: { id: chapter.id || "" },
+          update: {
+            title: chapter.title,
+            content: chapter.content,
+            order: chapter.order,
+            isDraft: chapter.isDraft ?? true,
+            bannerImage: chapter.bannerImage || null,
+          },
+          create: {
+            title: chapter.title,
+            content: chapter.content,
+            order: chapter.order,
+            isDraft: chapter.isDraft ?? true,
+            bannerImage: chapter.bannerImage || null,
+            storyId: storyId,
+          },
+        })
+      )
+    );
+
+    res
+      .status(200)
+      .json({ message: "Chapters synced", chapters: upsertedChapters });
+  } catch (err) {
+    console.error("Error syncing chapters:", err);
+    res.status(500).json({ error: "Failed to sync chapters" });
   }
 });
 
