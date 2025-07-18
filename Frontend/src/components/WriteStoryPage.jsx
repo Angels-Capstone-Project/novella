@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import Header from "./Header";
+import { set, get, del, keys } from "idb-keyval";
 import "./WriteStoryPage.css";
 
 export default function WritePage() {
@@ -12,11 +13,13 @@ export default function WritePage() {
   const [chapterTitle, setChapterTitle] = useState("");
   const [content, setContent] = useState("");
   const [banner, setBanner] = useState("");
+  const [authorId, setAuthorId]= useState("");
 
   useEffect(() => {
     const fetchStory = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/stories/${id}`);
+        setAuthorId(res.data.authorId);
         setStory(res.data);
       } catch (err) {
         console.error("Error fetching story:", err);
@@ -26,19 +29,19 @@ export default function WritePage() {
     const fetchChapter = async () => {
       try {
         const res = await axios.get(`${BASE_URL}/chapters/${chapterId}`);
-        const fetched= res.data.chapter;
+        const fetched = res.data.chapter;
 
-        if(!fetched){
+        if (!fetched) {
           console.warn("No chapter found. ");
           return;
         }
         setChapter(fetched);
         setChapterTitle(fetched.title || "");
-        
+
         setContent(fetched.content || "");
-        console.log("Content stuff ",fetched.content);
+        console.log("Content stuff ", fetched.content);
         setBanner(fetched.bannerImage || "");
-        console.log("Fetched data: " , fetched);
+        console.log("Fetched data: ", fetched);
       } catch (err) {
         console.error("Error fetching chapter:", err);
       }
@@ -46,6 +49,60 @@ export default function WritePage() {
     if (id) fetchStory();
     if (chapterId) fetchChapter();
   }, [id, chapterId]);
+
+  const autoSaveDraft = async (
+    chapterId,
+    storyId,
+    title,
+    content,
+    authorId
+  ) => {
+    const draft = {
+      chapterId,
+      storyId,
+      title,
+      content,
+      authorId,
+      updatedAt: new Date().toISOString(),
+    };
+    await set(`draft-${chapterId}`, draft);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      autoSaveDraft(chapterId, id, chapterTitle, content, authorId);
+    }, 2000); // autosave every 2s
+    return () => clearTimeout(timer);
+  }, [chapterTitle, content]);
+
+  useEffect(() => {
+    const syncIfOnline = async () => {
+      if (navigator.onLine) {
+        await syncDraftsToBackend();
+      }
+    };
+
+    window.addEventListener("online", syncIfOnline);
+    syncIfOnline();
+
+    return () => {
+      window.removeEventListener("online", syncIfOnline);
+    };
+  }, []);
+
+  const syncDraftsToBackend = async () => {
+    const keys = await keys(); 
+    const draftKeys = keys.filter((k) => k.startsWith("draft-"));
+    for (const key of draftKeys) {
+      const draft = await get(key);
+      try {
+        await axios.post("/chapters/save-draft", draft);
+        await del(key); // remove after syncing
+      } catch (err) {
+        console.error("Failed to sync draft:", err);
+      }
+    }
+  };
 
   const handleChapterAction = async ({ isDraft, isPublished }) => {
     try {
@@ -87,7 +144,7 @@ export default function WritePage() {
   };
 
   console.log("title:", chapterTitle);
-console.log("content:", content);
+  console.log("content:", content);
 
   return (
     <>

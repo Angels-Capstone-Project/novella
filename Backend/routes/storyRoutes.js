@@ -225,11 +225,9 @@ router.get("/stories", async (req, res) => {
 router.post("/stories", upload.single("coverImage"), async (req, res) => {
   const { title, description, genre, audience, status, authorId } = req.body;
 
-  if(!title || !description || !genre|| !audience){
-    return res.status(400).json({error:"All fields are required"});
-
+  if (!title || !description || !genre || !audience) {
+    return res.status(400).json({ error: "All fields are required" });
   }
-  
 
   let coverImage = null;
   if (req.file) {
@@ -259,6 +257,37 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
   } catch (error) {
     console.error("Error creating story:", error);
     res.status(500).json({ error: "Failed to create story" });
+  }
+});
+
+router.get("/genre-all", async (req, res) => {
+  try {
+    const genres = [
+      "romance",
+      "thriller",
+      "comedy",
+      "horror",
+      "drama",
+      "mystery",
+      "sci-fi",
+      "fantasy",
+      
+    ];
+    const genreData = {};
+
+    for (const genre of genres) {
+      const stories = await prisma.story.findMany({
+        where: { genre },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      });
+      genreData[genre] = stories;
+    }
+
+    res.json(genreData);
+  } catch (err) {
+    console.error("Failed to fetch genre data:", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
@@ -297,4 +326,31 @@ router.delete("/stories/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete story" });
   }
 });
+
+router.post("/mystories/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { stories } = req.body;
+
+    if (!stories || !Array.isArray(stories)) {
+      return res.status(400).json({ error: "Invalid stories payload" });
+    }
+
+    const saved = await Promise.all(
+      stories.map(async (story) =>
+        prisma.story.upsert({
+          where: { id: story.id },
+          update: { ...story },
+          create: { ...story, authorId: userId },
+        })
+      )
+    );
+
+    res.status(200).json(saved);
+  } catch (error) {
+    console.error("Error syncing stories:", error);
+    res.status(500).json({ error: "Failed to sync stories" });
+  }
+});
+
 export default router;
