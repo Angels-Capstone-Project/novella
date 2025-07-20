@@ -5,27 +5,16 @@ import "./MyStories.css";
 import Header from "./Header.jsx";
 import { FaTrash } from "react-icons/fa";
 import { fetchWithCache } from "../utils/fetchWithCache.js";
+import useOnlineStatus from "../utils/useOnlineStatus.js";
 
 const MyStories = ({ user }) => {
   const [stories, setStories] = useState([]);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [chaptersMap, setChaptersMap] = useState({});
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const isOnline =useOnlineStatus();
 
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -33,7 +22,7 @@ const MyStories = ({ user }) => {
         cacheKey: `mystories-${userId}`,
         getUrl: `${BASE_URL}/user/${userId}`,
         postUrl: `${BASE_URL}/mystories/${userId}`,
-        postPayload:  {stories: stories} , // Only needed if you want to sync
+        postPayload:  {stories: stories} , 
         setState: setStories,
         isOnline,
       });

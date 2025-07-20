@@ -66,22 +66,59 @@ router.post("/", async (req, res) => {
 
 // POST /chapters/save-draft
 router.post("/save-draft", async (req, res) => {
-  const { chapterId, storyId, title, content, authorId } = req.body;
+  const { chapterId, storyId, title, content, authorId, bannerImage } =
+    req.body;
+
+  if (!chapterId || !storyId || !authorId || !title) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   try {
-    const updatedDraft = await prisma.chapter.upsert({
+    // Check if draft already exists
+    const existingDraft = await prisma.chapter.findUnique({
       where: { id: chapterId },
-      update: { title, content },
-      create: {
+    });
+
+    // If draft exists, update it
+    if (existingDraft) {
+      const updatedDraft = await prisma.chapter.update({
+        where: { id: chapterId },
+        data: {
+          title,
+          content,
+          bannerImage: bannerImage || null,
+          isDraft: true,
+        },
+      });
+
+      return res.json(updatedDraft);
+    }
+
+    // If draft doesn't exist, calculate order and create it
+    const existingChapters = await prisma.chapter.count({
+      where: { storyId },
+    });
+
+    const order = existingChapters + 1;
+
+    const createdDraft = await prisma.chapter.create({
+      data: {
+        id: chapterId,
         storyId,
         title,
         content,
         authorId,
+        bannerImage: bannerImage || null,
         isDraft: true,
+        isPublished: false,
+        order,
       },
     });
-    res.json(updatedDraft);
+
+    return res.json(createdDraft);
   } catch (err) {
-    res.status(500).json({ error: "Failed to save draft" });
+    console.error(" Failed to save draft:", err);
+    return res.status(500).json({ error: err.message });
   }
 });
 
@@ -112,11 +149,9 @@ router.get("/all/:storyId", async (req, res) => {
 // Get one chapter
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  console.log("Fetching chapter with id: ", id);
 
   try {
     const chapter = await prisma.chapter.findUnique({ where: { id } });
-    console.log("Found chapter: ", chapter);
     if (!chapter) {
       return res.status(404).json({ error: "Chapter not found." });
     }

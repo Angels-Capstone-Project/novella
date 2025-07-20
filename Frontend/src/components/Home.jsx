@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { BASE_URL } from "../utils/api.js";
 import BookPreviewModal from "./BookPreviewModal.jsx";
 import RotatingBanner from "./RotatingBanner.jsx";
 import Header from "./Header.jsx";
-import { setCache, getCache, clearCache } from "../utils/cache.js";
+import { clearCache } from "../utils/cache.js";
 import { fetchWithCache } from "../utils/fetchWithCache";
+import useOnlineStatus from "../utils/useOnlineStatus.js";
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
@@ -15,69 +15,48 @@ const Home = ({ userId }) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [booksInRow, setBooksInRow] = useState([]);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [hasReloadedOnline, sethasReloadedOnline] = useState(false);
-
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-
-  useEffect(
-    () => {
-      if (!userId) return;
-      {
-        fetchWithCache({
-          cacheKey: "topPicks",
-          getUrl: `${BASE_URL}/top-picks/${userId}`,
-          postUrl: `${BASE_URL}/topPicks/${userId}`,
-          setState: setTopPicks,
-          postPayload: { topPicks: topPicks },
-          isOnline,
-        });
-
-        fetchWithCache({
-          cacheKey: "topUS",
-          getUrl: `${BASE_URL}/top-us`,
-          postUrl: `${BASE_URL}/topUs/${userId}`,
-          setState: setTopUS,
-          postPayload: { topUS: topUS },
-          isOnline,
-        });
-
-        fetchWithCache({
-          cacheKey: "genres",
-          getUrl: `${BASE_URL}/genre-all`,
-          postUrl: `${BASE_URL}/genres/${userId}`,
-          setState: setGenres,
-          postPayload: { genres: genres },
-          isOnline,
-        });
-      }
-    },
-    [userId,isOnline],
-    
-  );
+  const isOnline =useOnlineStatus();
 
   useEffect(() => {
     if (!userId) return;
+    {
+      fetchWithCache({
+        cacheKey: "topPicks",
+        getUrl: `${BASE_URL}/top-picks/${userId}`,
+        postUrl: `${BASE_URL}/topPicks/${userId}`,
+        setState: setTopPicks,
+        postPayload: { topPicks: topPicks },
+        isOnline,
+      });
 
-    fetchWithCache({
-      cacheKey: "trendingByGenre",
-      getUrl: `${BASE_URL}/genre-all`,
-      postUrl: `${BASE_URL}/trendingByGenre/${userId}`,
-      postPayload: { trendingByGenre: trendingByGenre },
-      setState: setTrendingByGenre,
-      isOnline,
-    });
+      fetchWithCache({
+        cacheKey: "topUS",
+        getUrl: `${BASE_URL}/top-us`,
+        postUrl: `${BASE_URL}/topUs/${userId}`,
+        setState: setTopUS,
+        postPayload: { topUS: topUS },
+        isOnline,
+      });
+
+      fetchWithCache({
+        cacheKey: "genres",
+        getUrl: `${BASE_URL}/genre-all`,
+        postUrl: `${BASE_URL}/genres/${userId}`,
+        setState: setGenres,
+        postPayload: { genres: genres },
+        isOnline,
+      });
+
+      fetchWithCache({
+        cacheKey: "trendingByGenre",
+        getUrl: `${BASE_URL}/genre-all`,
+        postUrl: `${BASE_URL}/trendingByGenre/${userId}`,
+        postPayload: { trendingByGenre: trendingByGenre },
+        setState: setTrendingByGenre,
+        isOnline,
+      });
+    }
   }, [userId, isOnline]);
 
   useEffect(() => {
@@ -93,7 +72,6 @@ const Home = ({ userId }) => {
     window.addEventListener("online", handleOnline);
     return () => window.removeEventListener("online", handleOnline);
   }, [hasReloadedOnline]);
-
 
   const renderStoryList = (title, stories, showNumber = false, onCardClick) => (
     <div>
