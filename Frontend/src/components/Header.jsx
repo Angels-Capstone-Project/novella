@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
-
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -13,6 +12,30 @@ const Header = () => {
   const handleSearch = (e) => {
     if (e.key === "Enter" && query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
+
+  const handleLogout = async () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (!confirmLogout) return;
+
+    try {
+      const res = await fetch("http://localhost:3000/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        // Clear local session info if any
+        localStorage.removeItem("userId");
+
+        // Redirect to login
+        window.location.href = "/login";
+      } else {
+        console.error("Logout failed");
+      }
+    } catch (err) {
+      console.error("Error during logout", err);
     }
   };
 
@@ -28,12 +51,13 @@ const Header = () => {
 
   return (
     <header className="header">
-      <div className="header-left"
-        onClick={()=>navigate("/home")}
-        style={{cursor:"pointer"}}
-        >
+      <div
+        className="header-left"
+        onClick={() => navigate("/home")}
+        style={{ cursor: "pointer" }}
+      >
         Novella
-        </div>
+      </div>
       <input
         type="text"
         placeholder="Search by title or author..."
@@ -75,7 +99,7 @@ const Header = () => {
             <button>Language: English</button>
             <button>Help</button>
             <button>Settings</button>
-            <button className="logout">Log Out</button>
+            <button onClick={handleLogout} className="logout">Log Out</button>
           </div>
         )}
       </div>
