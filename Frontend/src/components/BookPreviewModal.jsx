@@ -81,7 +81,7 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
             <div
               key={book.id}
               className={`book-card ${
-                book.Id === selectedBookId ? "selected" : ""
+                book.id === selectedBookId ? "selected" : ""
               }`}
             >
               <img src={book.coverImage} alt={book.title} />

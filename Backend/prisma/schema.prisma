@@ -29,6 +29,7 @@ comments   Comment[]
 readinglists   ReadingList[]   
 libraries     Library[]    
 createdAt    DateTime  @default(now())
+engagements Engagement[]
 }
 
 model Story {
@@ -37,6 +38,7 @@ title    String
 description   String?
 genre   String
 audience      String?
+tags        String[]   @default([])
 status     String    @default("draft")
 likedBy   User[]  @relation("LikedStories")
 readBy   User[]  @relation("ReadStories")
@@ -49,6 +51,7 @@ comments   Comment[]
 chapters   Chapter[]
 readinglists   ReadingList[]   @relation("ReadingListBooks")
 libraries     Library[]      @relation("LibraryBooks")
+engagements Engagement[]
 }
 
 model Comment {
@@ -66,6 +69,7 @@ model Chapter {
   title   String
   content  String
   order     Int 
+  tags        String[]   @default([])
   bannerImage    String?
   isDraft    Boolean   @default(true)
   isPublished    Boolean   @default(false)
@@ -103,4 +107,14 @@ model HomeCache {
   topUS     Json?
   genres      Json?
   trendingByGenre     Json?
+}
+
+model Engagement {
+id    String    @id @default(cuid())
+duration    Int 
+createdAt     DateTime     @default(now())
+user     User     @relation(fields: [userId], references: [id])
+userId    String
+story   Story    @relation(fields: [storyId], references: [id])
+storyId     String
 }

@@ -152,7 +152,7 @@ const Home = ({ userId }) => {
         handelCardClick
       )}
       {renderStoryList(
-        "Top 20 in the U.S.",
+        "Top 10 in the U.S.",
         topUS?.length ? topUS : [],
         true,
         handelCardClick
