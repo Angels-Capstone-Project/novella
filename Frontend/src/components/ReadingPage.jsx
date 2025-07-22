@@ -21,6 +21,7 @@ const ReadingPage = () => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [storyInfo, setStoryInfo] = useState(null);
+  const userId = localStorage.getItem("userId");
 
   const chaptersToUse =
     backendChapters.length > 0 ? backendChapters : dummyChapters;
@@ -31,9 +32,9 @@ const ReadingPage = () => {
       try {
         const res = await fetch(`${BASE_URL}/chapters/all/${bookId}`);
         if (!res.ok) throw new Error("Failed to fetch chapters");
-        
+
         const data = await res.json();
-        setBackendChapters((data || []).filter(ch =>ch.isDraft===false));
+        setBackendChapters((data || []).filter((ch) => ch.isDraft === false));
       } catch (err) {
         console.error("Error fetching chapters:", err);
       } finally {
@@ -56,11 +57,30 @@ const ReadingPage = () => {
     fetchStoryInfo();
   }, [bookId]);
 
+  useEffect(() => {
+    const startTime = Date.now();
+
+    return () => {
+      const endTime = Date.now();
+      const duration = Math.floor((endTime - startTime) / 1000);
+
+      fetch(`${BASE_URL}/engagement`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          storyId: bookId,
+          duration,
+        }),
+      });
+    };
+  }, []);
+
   if (loading) return <p>Loading chapters...</p>;
 
   return (
     <>
-    <Header/>
+      <Header />
       {storyInfo && (
         <div className="story-banner">
           <img

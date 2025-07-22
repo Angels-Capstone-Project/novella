@@ -2,6 +2,8 @@ import { PrismaClient } from "../generated/prisma/index.js";
 import express from "express";
 import { likeStory, readStory } from "../controllers/storyController.js";
 import multer from "multer";
+import { extractTagsFromContent } from "../utils/extractTags.js";
+import { generateRecommendations } from "../utils/recommendationEngine.js";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -21,84 +23,133 @@ function sortStoriesByPopularity(stories, limit = 20) {
     .slice(0, limit);
 }
 
+router.post("/engagement", async (req, res) => {
+  const { userId, storyId, duration } = req.body;
+  try {
+    const engagement = await prisma.engagement.create({
+      data: { userId, storyId, duration },
+    });
+    res.status(200).json(engagement);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to track engagement" });
+  }
+});
+
 router.get("/top-picks/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
-    if (!userId) {
-      return res.status(400).json({ error: "Missing user Id" });
-    }
-
-    const userInteractions = await prisma.story.findMany({
-      where: {
-        OR: [
-          { likedBy: { some: { id: userId } } },
-          { readBy: { some: { id: userId } } },
-        ],
-      },
-      select: { genre: true },
+    // 1. Get user (for birthday)
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
-    if (!userInteractions.length) {
-      return res.status(200).json([]);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    const genreCount = {};
-    for (const story of userInteractions) {
-      genreCount[story.genre] = (genreCount[story.genre] || 0) + 1;
+    // 2. Get all stories with related info
+    const allStories = await prisma.story.findMany({
+      include: {
+        chapters: true,
+        likedBy: { select: { id: true } },
+        readBy: { select: { id: true } },
+      },
+    });
+
+    // 3. Stories user has liked and read
+    const liked = await prisma.story.findMany({
+      where: { likedBy: { some: { id: userId } } },
+      select: { id: true },
+    });
+    const read = await prisma.story.findMany({
+      where: { readBy: { some: { id: userId } } },
+      select: { id: true },
+    });
+
+    const engagementRecords = await prisma.engagement.findMany({
+      where: { userId },
+    });
+
+    const engagementData = {};
+    for (const record of engagementRecords) {
+      engagementData[record.storyId] = { duration: record.duration };
     }
 
-    const total = Object.values(genreCount).reduce((a, b) => a + b, 0);
-    const genreQuota = {};
-    for (const [genre, count] of Object.entries(genreCount)) {
-      genreQuota[genre] = Math.round((count / total) * 10);
-    }
+    // 5. Generate recommendations
+    const recommendedStories = generateRecommendations({
+      allStories,
+      user,
+      likedStoryIds: liked.map((s) => s.id),
+      readStoryIds: read.map((s) => s.id),
+      engagementData,
+    });
 
-    for (const genre in genreQuota) {
-      if (genreQuota[genre] < 1) genreQuota[genre] = 1;
-    }
-
-    let topPicks = [];
-
-    for (const [genre, count] of Object.entries(genreQuota)) {
-      const stories = await prisma.story.findMany({
-        where: {
-          genre,
-          likedBy: { none: { id: userId } },
-          readBy: { none: { id: userId } },
-        },
-        take: count,
-      });
-
-      topPicks.push(...stories);
-    }
-
-    const shuffled = topPicks.sort(() => 0.5 - Math.random());
-    res.json(shuffled.slice(0, 20));
+    return res.json(recommendedStories);
   } catch (error) {
-    console.error("Failed to fetch top picks", error);
-    res.status(500).json({ error: "Server error while fetching top picks" });
+    console.error("Top Picks Error:", error);
+    return res.status(500).json({ error: "Failed to generate top picks" });
   }
 });
 
 router.get("/top-us", async (req, res) => {
   try {
-    const stories = await prisma.story.findMany({
-      include: {
-        readBy: true,
-        likedBy: true,
+    // 1. Get all users (for audience filtering)
+    const allUsers = await prisma.user.findMany({
+      select: {
+        id: true,
+        birthday: true,
       },
     });
 
-    if (!stories || stories.length === 0) {
-      return res.status(404).json({ error: "No stories found for Top Us" });
+    // Use a fallback birthday if none found
+    const fallbackUser = allUsers.find((u) => u.birthday) || {
+      birthday: "2000-01-01", // fallback birthday
+    };
+
+    // 2. Get all stories and related info
+    const allStories = await prisma.story.findMany({
+      include: {
+        likedBy: { select: { id: true } },
+        readBy: { select: { id: true } },
+        chapters: true,
+        // author: true,
+      },
+    });
+
+    // 3. Get engagement data from all users
+    const allEngagements = await prisma.engagement.findMany();
+
+    const engagementData = {};
+    for (const record of allEngagements) {
+      engagementData[record.storyId] = {
+        duration: record.duration,
+      };
     }
 
-    const sorted = sortStoriesByPopularity(stories);
-    res.json(sorted);
+    const likedStoryIds = allStories
+      .filter((s) => s.likedBy && s.likedBy.length > 0)
+      .map((s) => s.id);
+
+    const readStoryIds = allStories
+      .filter((s) => s.readBy && s.readBy.length > 0)
+      .map((s) => s.id);
+
+    // 4. Generate Top US Recommendations
+    const recommendedStories = generateRecommendations({
+      allStories,
+      user: fallbackUser,
+      likedStoryIds,
+      readStoryIds,
+      engagementData,
+    });
+    const topN = 10;
+    const topStories = recommendedStories.slice(0, topN);
+
+    res.json(topStories);
   } catch (error) {
-    console.error("Top Us Error:", error);
-    res.status(500).json({ error: "Failed to fetch top US stories" });
+    console.error("Top US Error:", error);
+    res.status(500).json({ error: "Failed to generate Top US stories" });
   }
 });
 
@@ -109,7 +160,13 @@ router.get("/genre/:genre", async (req, res) => {
     if (!genre) {
       return res.status(400).json({ error: "Genre parameter is required" });
     }
-    const stories = await prisma.story.findMany({
+
+    const allUsers = await prisma.user.findMany();
+    const fallbackUser = allUsers.find((u) => u.birthday) || {
+      birthday: "2000-01-01", // fallback if none
+    };
+
+    const allStories = await prisma.story.findMany({
       where: {
         genre: {
           equals: genre,
@@ -117,18 +174,44 @@ router.get("/genre/:genre", async (req, res) => {
         },
       },
       include: {
-        readBy: true,
-        likedBy: true,
+        likedBy: { select: { id: true } },
+        readBy: { select: { id: true } },
+        chapters: true,
+        author: true,
       },
     });
 
-    const sorted = sortStoriesByPopularity(stories);
-    res.json(sorted);
+    const allEngagements = await prisma.engagement.findMany();
+    const engagementData = {};
+    for (const record of allEngagements) {
+      engagementData[record.storyId] = {
+        duration: record.duration,
+      };
+    }
+
+    const likedStoryIds = allStories
+      .filter((s) => s.likedBy && s.likedBy.length > 0)
+      .map((s) => s.id);
+
+    const readStoryIds = allStories
+      .filter((s) => s.readBy && s.readBy.length > 0)
+      .map((s) => s.id);
+
+    // Recommendation logic
+    const recommendedStories = generateRecommendations({
+      allStories,
+      user: fallbackUser,
+      likedStoryIds,
+      readStoryIds,
+      engagementData,
+    });
+
+    const topN = 10;
+    const topGenreStories = recommendedStories.slice(0, topN);
+    res.json(topGenreStories);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "Failed to fetch trending stories for genre" });
+    console.error("Genre-based Error:", error);
+    res.status(500).json({ error: "Failed to generate genre-based stories" });
   }
 });
 
@@ -240,6 +323,8 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
     return res.status(401).json({ error: "Unauthorized. Missing authorId." });
   }
 
+  const systemTags = extractTagsFromContent(description);
+
   try {
     const story = await prisma.story.create({
       data: {
@@ -250,6 +335,7 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
         status,
         coverImage,
         authorId,
+        tags: systemTags,
       },
     });
 
@@ -271,7 +357,6 @@ router.get("/genre-all", async (req, res) => {
       "mystery",
       "sci-fi",
       "fantasy",
-      
     ];
     const genreData = {};
 

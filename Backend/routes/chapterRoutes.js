@@ -1,5 +1,6 @@
 import express from "express";
 import { PrismaClient } from "../generated/prisma/index.js";
+import {extractTagsFromContent} from "../utils/extractTags.js";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -22,6 +23,13 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ error: "Story not found." });
     }
 
+    const existingDraft = await prisma.chapter.findFirst({
+      where:{
+        storyId,
+        isDraft: true,
+      },
+    });
+
     if (isPublished && existingDraft) {
       const updatedChapter = await prisma.chapter.update({
         where: { id: existingDraft.id },
@@ -43,6 +51,7 @@ router.post("/", async (req, res) => {
       where: { storyId },
     });
 
+     const tags= extractTagsFromContent(content);
     const order = existingChapters + 1;
 
     const chapter = await prisma.chapter.create({
@@ -54,6 +63,7 @@ router.post("/", async (req, res) => {
         bannerImage,
         isDraft,
         isPublished,
+        tags,
       },
     });
 
@@ -167,11 +177,13 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title, content, order, bannerImage, isDraft, isPublished } = req.body;
+  const tags= extractTagsFromContent(content);
+
 
   try {
     const chapter = await prisma.chapter.update({
       where: { id },
-      data: { title, content, order, bannerImage, isDraft, isPublished },
+      data: { title, content, order, bannerImage, isDraft, isPublished, tags, },
     });
 
     res.status(200).json(chapter);
