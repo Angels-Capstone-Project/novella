@@ -21,24 +21,6 @@ function sortStoriesByPopularity(stories, limit = 20) {
     .slice(0, limit);
 }
 
-router.get("/genres", async (req, res) => {
-  try {
-    const genres = await prisma.story.findMany({
-      distinct: ["genre"],
-      select: { genre: true },
-    });
-
-    const genreList = genres
-      .map((g) => g.genre)
-      .filter((g) => g !== null && g !== "");
-
-    res.status(200).json(genreList);
-  } catch (error) {
-    console.error("Error fetching genres:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 router.get("/top-picks/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -289,6 +271,7 @@ router.get("/genre-all", async (req, res) => {
       "mystery",
       "sci-fi",
       "fantasy",
+      
     ];
     const genreData = {};
 
@@ -343,4 +326,31 @@ router.delete("/stories/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete story" });
   }
 });
+
+router.post("/mystories/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { stories } = req.body;
+
+    if (!stories || !Array.isArray(stories)) {
+      return res.status(400).json({ error: "Invalid stories payload" });
+    }
+
+    const saved = await Promise.all(
+      stories.map(async (story) =>
+        prisma.story.upsert({
+          where: { id: story.id },
+          update: { ...story },
+          create: { ...story, authorId: userId },
+        })
+      )
+    );
+
+    res.status(200).json(saved);
+  } catch (error) {
+    console.error("Error syncing stories:", error);
+    res.status(500).json({ error: "Failed to sync stories" });
+  }
+});
+
 export default router;

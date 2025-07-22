@@ -106,7 +106,10 @@ export default function CreateStoryPage() {
               <option value="thriller">Thriller</option>
               <option value="fantasy">Fantasy</option>
               <option value="drama">Drama</option>
-              <option value="drama">Comedy</option>
+              <option value="comedy">Comedy</option>
+              <option value="horror">Horror</option>
+              <option value="mystery">Mystery</option>
+              <option value="sci-fi">Sci-fi</option>
             </select>
           </div>
 

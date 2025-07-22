@@ -1,8 +1,9 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
 import axios from "axios";
-import { BASE_URL } from "../utils/api.js";
+import { set, get, keys, del } from "idb-keyval";
 import Header from "./Header";
+import { BASE_URL } from "../utils/api.js";
 import "./WriteStoryPage.css";
 
 export default function WritePage() {
@@ -12,82 +13,151 @@ export default function WritePage() {
   const [chapterTitle, setChapterTitle] = useState("");
   const [content, setContent] = useState("");
   const [banner, setBanner] = useState("");
+  const [authorId, setAuthorId] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
 
+  // 1. Load story & chapter (backend or cache)
   useEffect(() => {
     const fetchStory = async () => {
+      if (!id) return;
+
       try {
         const res = await axios.get(`${BASE_URL}/stories/${id}`);
         setStory(res.data);
+        setAuthorId(res.data.authorId);
+        // Cache the story
+        await set(`story-${id}`, res.data);
       } catch (err) {
-        console.error("Error fetching story:", err);
+        console.warn("Offline or error fetching story, loading from cache");
+        const cachedStory = await get(`story-${id}`);
+        if (cachedStory) {
+          setStory(cachedStory);
+          setAuthorId(cachedStory.authorId || "");
+        }
       }
     };
 
     const fetchChapter = async () => {
+      if (!chapterId) return;
+
       try {
         const res = await axios.get(`${BASE_URL}/chapters/${chapterId}`);
-        const fetched= res.data.chapter;
+        const chapterData = res.data.chapter;
+        setChapter(chapterData);
+        setChapterTitle(chapterData.title || "");
+        setContent(chapterData.content || "");
+        setBanner(chapterData.bannerImage || "");
+        setAuthorId(chapterData.authorId || "");
 
-        if(!fetched){
-          console.warn("No chapter found. ");
-          return;
-        }
-        setChapter(fetched);
-        setChapterTitle(fetched.title || "");
-        
-        setContent(fetched.content || "");
-        console.log("Content stuff ",fetched.content);
-        setBanner(fetched.bannerImage || "");
-        console.log("Fetched data: " , fetched);
+        // Cache chapter
+        await set(`draft-${chapterId}`, chapterData);
       } catch (err) {
-        console.error("Error fetching chapter:", err);
+        console.warn("Offline or error fetching chapter, loading from cache");
+        const cachedChapter = await get(`draft-${chapterId}`);
+        if (cachedChapter) {
+          setChapterTitle(cachedChapter.title || "");
+          setContent(cachedChapter.content || "");
+          setBanner(cachedChapter.bannerImage || "");
+          setAuthorId(cachedChapter.authorId || "");
+        }
       }
     };
-    if (id) fetchStory();
-    if (chapterId) fetchChapter();
+
+    fetchStory();
+    fetchChapter();
   }, [id, chapterId]);
 
-  const handleChapterAction = async ({ isDraft, isPublished }) => {
-    try {
-      if (!chapterTitle.trim() || !content.trim()) {
-        return alert(
-          "Please fill out chapter title and content before publishing."
-        );
+  // 2. Auto-save after pause in typing
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      autoSaveDraft();
+    }, 2000); // 2 sec pause
+
+    return () => clearTimeout(handler);
+  }, [chapterTitle, content]);
+
+  const autoSaveDraft = async () => {
+    if (!chapterId || !id || !authorId) return;
+
+    const draft = {
+      chapterId,
+      storyId: id,
+      title: chapterTitle,
+      content,
+      bannerImage: banner,
+      authorId,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await set(`draft-${chapterId}`, draft);
+    setSaveStatus("Saved locally while offline 🟠");
+  };
+
+  // 3. Sync drafts when back online
+  useEffect(() => {
+    const syncIfOnline = async () => {
+      if (navigator.onLine) {
+        const draftKeys = (await keys()).filter((k) => k.startsWith("draft-"));
+        for (let key of draftKeys) {
+          const draft = await get(key);
+          if (!draft.chapterId || !draft.storyId || !draft.authorId) continue;
+
+          try {
+            await axios.post(`${BASE_URL}/chapters/save-draft`, draft);
+            await del(key); // Delete from cache after sync
+            console.log(`Synced: ${key}`);
+            setSaveStatus("✅ Draft synced online");
+          } catch (err) {
+            console.error("❌ Failed to sync draft:", err);
+          }
+        }
       }
+    };
 
-      const payload = {
-        title: chapterTitle,
-        content,
-        bannerImage: banner,
-        isDraft,
-        isPublished,
-      };
+    window.addEventListener("online", syncIfOnline);
+    syncIfOnline();
 
+    return () => {
+      window.removeEventListener("online", syncIfOnline);
+    };
+  }, []);
+
+  // 4. Manual save/publish
+  const handleChapterAction = async ({ isDraft, isPublished }) => {
+    if (!chapterTitle.trim() || !content.trim()) {
+      return alert(
+        "Please fill out chapter title and content before publishing."
+      );
+    }
+
+    const payload = {
+      chapterId,
+      title: chapterTitle,
+      content,
+      bannerImage: banner,
+      isDraft,
+      isPublished,
+      storyId: id,
+      authorId,
+    };
+
+    try {
       if (chapterId) {
-        // Update existing chapter
         await axios.put(`${BASE_URL}/chapters/${chapterId}`, payload);
       } else {
-        // Create new chapter
-        await axios.post(`${BASE_URL}/chapters`, {
-          ...payload,
-          storyId: id,
-        });
+        await axios.post(`${BASE_URL}/chapters`, payload);
       }
 
       const action = isPublished ? "published" : "saved as draft";
       alert(`Chapter successfully ${action}!`);
     } catch (err) {
-      console.error("Error:", err);
-      alert("Something went wrong.");
+      alert("❌ Failed to save chapter.");
     }
   };
 
   const handlePreview = () => {
-    alert("preview would open here!");
+    alert("Preview would open here!");
   };
-
-  console.log("title:", chapterTitle);
-console.log("content:", content);
 
   return (
     <>
@@ -101,24 +171,25 @@ console.log("content:", content);
               className="story-cover-image"
             />
           )}
-          <div className="story-info">
-            <h3 className="story-title">
-              {story?.title || "Loading story..."}
-            </h3>
-            <p className="story-status">Draft • 0 Words • Saved</p>
-          </div>
+        </div>
+
+        <div className="story-info">
+          <h3 className="story-title">{story?.title || "Loading story..."}</h3>
+          <p className="story-status">
+            Draft • {content?.length || 0} Words • {saveStatus}
+          </p>
         </div>
 
         {banner && (
           <img src={banner} alt="Chapter Banner" className="chapter-banner" />
         )}
-
         <div className="banner-upload">
           <input
             type="text"
             placeholder="Optional: Paste a banner image URL here"
             value={banner}
             onChange={(e) => setBanner(e.target.value)}
+            className="chapter-banner-input"
           />
         </div>
 
@@ -139,9 +210,14 @@ console.log("content:", content);
         <div className="chapter-actions">
           <button
             className="save-button"
-            onClick={() =>
-              handleChapterAction({ isDraft: true, isPublished: false })
-            }
+            onClick={() => {
+              if (!navigator.onLine) {
+                autoSaveDraft(chapterId, id, chapterTitle, content, authorId);
+                setSaveStatus("Saved offline. Will sync when online.");
+              } else {
+                handleChapterAction({ isDraft: true, isPublished: false });
+              }
+            }}
           >
             Save
           </button>
@@ -152,9 +228,13 @@ console.log("content:", content);
 
           <button
             className="publish-button"
-            onClick={() =>
-              handleChapterAction({ isDraft: false, isPublished: true })
-            }
+            onClick={() => {
+              if (!navigator.onLine) {
+                alert("You're offline. Please connect to publish.");
+                return;
+              }
+              handleChapterAction({ isDraft: false, isPublished: true });
+            }}
           >
             Publish
           </button>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCache, setCache } from "../utils/cache.js";
+import { getCache, setCache, clearCacheKey } from "../utils/cache.js";
 
 export const fetchWithCache = async ({
   cacheKey,
@@ -12,7 +12,7 @@ export const fetchWithCache = async ({
   try {
     // 1. Show cache first
     const cached = await getCache(cacheKey);
-    if (cached) {
+    if (cached && typeof setState === "function") {
       setState(cached);
     }
 
@@ -25,15 +25,24 @@ export const fetchWithCache = async ({
       const isSame = cached && JSON.stringify(cached) === JSON.stringify(fresh);
 
       if (!isSame) {
+        await clearCacheKey(cacheKey);
         await setCache(cacheKey, fresh);
-        setState(fresh);
+        if (typeof setState === "function") {
+          setState(fresh);
+        }
       }
 
       if (postUrl && postPayload) {
-        try {
-          await axios.post(postUrl, postPayload);
-        } catch (err) {
-          console.warn(`Failed to POST sync for ${cacheKey}`, err.message);
+        const alreadySynced = await getCache(`${cacheKey}-synced`);
+        const payloadHash = JSON.stringify(postPayload);
+
+        if (alreadySynced !== payloadHash) {
+          try {
+            await axios.post(postUrl, postPayload);
+            await setCache(`${cacheKey}-synced`, payloadHash);
+          } catch (err) {
+            console.warn(`Failed to POST sync for ${cacheKey}`, err.message);
+          }
         }
       }
     }

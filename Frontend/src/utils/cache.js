@@ -27,3 +27,9 @@ export async function clearCache() {
   const db = await initDB();
   return db.clear(STORE_NAME);
 }
+
+export async function clearCacheKey(key) {
+  const db = await initDB();
+  await db.delete(STORE_NAME, key);
+  await db.delete(STORE_NAME, `${key}-synced`);
+}

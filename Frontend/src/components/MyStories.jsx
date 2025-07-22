@@ -4,6 +4,8 @@ import { BASE_URL } from "../utils/api.js";
 import "./MyStories.css";
 import Header from "./Header.jsx";
 import { FaTrash } from "react-icons/fa";
+import { fetchWithCache } from "../utils/fetchWithCache.js";
+import useOnlineStatus from "../utils/useOnlineStatus.js";
 
 const MyStories = ({ user }) => {
   const [stories, setStories] = useState([]);
@@ -11,22 +13,23 @@ const MyStories = ({ user }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
+  const isOnline =useOnlineStatus();
+
 
   useEffect(() => {
     const fetchStories = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/user/${userId}`);
-        const data = await response.json();
-        setStories(data);
-      } catch (error) {
-        console.error("Error fetching stories:", error);
-      }
+      await fetchWithCache({
+        cacheKey: `mystories-${userId}`,
+        getUrl: `${BASE_URL}/user/${userId}`,
+        postUrl: `${BASE_URL}/mystories/${userId}`,
+        postPayload:  {stories: stories} , 
+        setState: setStories,
+        isOnline,
+      });
     };
 
-    if (userId) {
-      fetchStories();
-    }
-  }, [userId]);
+    if (userId) fetchStories();
+  }, [userId, isOnline]);
 
   const handleEdit = (storyId, chapterId) => {
     navigate(`/write/${storyId}/${chapterId}`);
@@ -74,21 +77,24 @@ const MyStories = ({ user }) => {
 
   const handleToggleDropdown = async (storyId) => {
     if (openDropdown === storyId) {
-      setOpenDropdown(null);
+      setOpenDropdown(null); // close it
       return;
     }
 
-    try {
-      const res = await fetch(`${BASE_URL}/chapters/all/${storyId}`);
-      const data = await res.json();
-      setChaptersMap((prev) => ({
-        ...prev,
-        [storyId]: data,
-      }));
-      setOpenDropdown(storyId);
-    } catch (error) {
-      console.error("Error fetching chapters:", error);
-    }
+    setOpenDropdown(storyId); // open it
+
+    await fetchWithCache({
+      cacheKey: `chapters-${storyId}`,
+      getUrl: `${BASE_URL}/chapters/all/${storyId}`,
+      postUrl: `${BASE_URL}/chapters/sync/${storyId}`,
+        postPayload:  chaptersMap[storyId] ,
+      setState: (fetchedChapters) =>
+        setChaptersMap((prev) => ({
+          ...prev,
+          [storyId]: fetchedChapters,
+        })),
+      isOnline,
+    });
   };
 
   return (

@@ -64,6 +64,64 @@ router.post("/", async (req, res) => {
   }
 });
 
+// POST /chapters/save-draft
+router.post("/save-draft", async (req, res) => {
+  const { chapterId, storyId, title, content, authorId, bannerImage } =
+    req.body;
+
+  if (!chapterId || !storyId || !authorId || !title) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    // Check if draft already exists
+    const existingDraft = await prisma.chapter.findUnique({
+      where: { id: chapterId },
+    });
+
+    // If draft exists, update it
+    if (existingDraft) {
+      const updatedDraft = await prisma.chapter.update({
+        where: { id: chapterId },
+        data: {
+          title,
+          content,
+          bannerImage: bannerImage || null,
+          isDraft: true,
+        },
+      });
+
+      return res.json(updatedDraft);
+    }
+
+    // If draft doesn't exist, calculate order and create it
+    const existingChapters = await prisma.chapter.count({
+      where: { storyId },
+    });
+
+    const order = existingChapters + 1;
+
+    const createdDraft = await prisma.chapter.create({
+      data: {
+        id: chapterId,
+        storyId,
+        title,
+        content,
+        authorId,
+        bannerImage: bannerImage || null,
+        isDraft: true,
+        isPublished: false,
+        order,
+      },
+    });
+
+    return res.json(createdDraft);
+  } catch (err) {
+    console.error(" Failed to save draft:", err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 router.get("/all/:storyId", async (req, res) => {
   const { storyId } = req.params;
 
@@ -91,11 +149,9 @@ router.get("/all/:storyId", async (req, res) => {
 // Get one chapter
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
-  console.log("Fetching chapter with id: ", id);
 
   try {
     const chapter = await prisma.chapter.findUnique({ where: { id } });
-    console.log("Found chapter: ", chapter);
     if (!chapter) {
       return res.status(404).json({ error: "Chapter not found." });
     }
@@ -152,6 +208,47 @@ router.patch("/:id", async (req, res) => {
   } catch (error) {
     console.error("Auto-save failed:", error);
     res.status(500).json({ error: "Internal server error." });
+  }
+});
+
+router.post("/sync/:storyId", async (req, res) => {
+  const { storyId } = req.params;
+  const chapters = req.body;
+
+  if (!Array.isArray(chapters)) {
+    return res.status(400).json({ error: "Invalid chapter payload" });
+  }
+
+  try {
+    const upsertedChapters = await Promise.all(
+      chapters.map((chapter) =>
+        prisma.chapter.upsert({
+          where: { id: chapter.id || "" },
+          update: {
+            title: chapter.title,
+            content: chapter.content,
+            order: chapter.order,
+            isDraft: chapter.isDraft ?? true,
+            bannerImage: chapter.bannerImage || null,
+          },
+          create: {
+            title: chapter.title,
+            content: chapter.content,
+            order: chapter.order,
+            isDraft: chapter.isDraft ?? true,
+            bannerImage: chapter.bannerImage || null,
+            storyId: storyId,
+          },
+        })
+      )
+    );
+
+    res
+      .status(200)
+      .json({ message: "Chapters synced", chapters: upsertedChapters });
+  } catch (err) {
+    console.error("Error syncing chapters:", err);
+    res.status(500).json({ error: "Failed to sync chapters" });
   }
 });
 
