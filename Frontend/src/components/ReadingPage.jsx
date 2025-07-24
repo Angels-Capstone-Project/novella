@@ -19,6 +19,13 @@ const ReadingPage = () => {
   const { bookId } = useParams();
   const [backendChapters, setBackendChapters] = useState([]);
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
+
+  useEffect(() => {
+const savedIndex = localStorage.getItem(`bookmark-${bookId}`);
+if (savedIndex !== null) {
+setCurrentChapterIndex(parseInt(savedIndex, 10));
+}
+}, [bookId]);
   const [loading, setLoading] = useState(true);
   const [storyInfo, setStoryInfo] = useState(null);
   const userId = localStorage.getItem("userId");
@@ -56,6 +63,23 @@ const ReadingPage = () => {
     fetchChapters();
     fetchStoryInfo();
   }, [bookId]);
+
+  const saveBookmark = async (index) => {
+try {
+await fetch(`${BASE_URL}/bookmark`, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({
+userId,
+storyId: bookId,
+chapterIndex: index, 
+}),
+});
+console.log("Bookmark saved!");
+} catch (err) {
+console.error("Failed to save bookmark:", err);
+}
+};
 
   useEffect(() => {
     const startTime = Date.now();
@@ -101,7 +125,11 @@ const ReadingPage = () => {
               <li
                 key={chapter.id || index}
                 className={index === currentChapterIndex ? "active" : ""}
-                onClick={() => setCurrentChapterIndex(index)}
+                onClick={() => {
+                  setCurrentChapterIndex(index);
+                  localStorage.setItem(`bookmark-${bookId}`, index);
+                
+                }}
               >
                 {chapter.title}
               </li>

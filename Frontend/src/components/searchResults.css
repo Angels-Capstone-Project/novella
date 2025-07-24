@@ -51,4 +51,5 @@
   margin-top: 0.8rem;
   font-size: 0.95rem;
   color: #333;
+  word-break: break-word;
 }

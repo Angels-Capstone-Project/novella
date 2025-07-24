@@ -14,6 +14,9 @@ const Header = () => {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
+  const handleProfileClick = () => {
+    navigate('/profile');
+  }
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -69,7 +72,7 @@ const Header = () => {
 
       <div className="write-dropdown">
         <button
-          className="dropdown-toggle"
+          className="dropdown-toggles"
           onClick={() => setIsWriteOpen(!isWriteOpen)}
         >
           Write ⌄
@@ -93,12 +96,8 @@ const Header = () => {
 
         {isOpen && (
           <div className="dropdown-menu">
-            <button>Inbox</button>
-            <button>Notifications </button>
+            <button onClick={handleProfileClick}>Profile </button>
             <button onClick={() => navigate("/library")}>Library</button>
-            <button>Language: English</button>
-            <button>Help</button>
-            <button>Settings</button>
             <button onClick={handleLogout} className="logout">Log Out</button>
           </div>
         )}

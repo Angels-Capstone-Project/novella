@@ -13,16 +13,6 @@ router.post("/stories/:id/read", readStory);
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-function sortStoriesByPopularity(stories, limit = 20) {
-  return stories
-    .map((story) => ({
-      ...story,
-      popularityScore: story.readBy.length + story.likedBy.length,
-    }))
-    .sort((a, b) => b.popularityScore - a.popularityScore)
-    .slice(0, limit);
-}
-
 router.post("/engagement", async (req, res) => {
   const { userId, storyId, duration } = req.body;
   try {
