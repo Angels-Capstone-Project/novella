@@ -97,7 +97,7 @@ const Header = () => {
           className="profile-icon"
           onClick={() => setIsOpen(!isOpen)}
         />
-        ⌄
+        
         {isOpen && (
           <div className="dropdown-menu">
             <button onClick={handleProfileClick}>Profile </button>
