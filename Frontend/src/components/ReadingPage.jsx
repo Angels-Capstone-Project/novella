@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { BASE_URL } from "../utils/api.js";
 import Header from "./Header.jsx";
 import "./ReadingPage.css";
+import CommentSection from "./CommentSection.jsx";
 
 const dummyChapters = [
   {
@@ -21,11 +22,11 @@ const ReadingPage = () => {
   const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
 
   useEffect(() => {
-const savedIndex = localStorage.getItem(`bookmark-${bookId}`);
-if (savedIndex !== null) {
-setCurrentChapterIndex(parseInt(savedIndex, 10));
-}
-}, [bookId]);
+    const savedIndex = localStorage.getItem(`bookmark-${bookId}`);
+    if (savedIndex !== null) {
+      setCurrentChapterIndex(parseInt(savedIndex, 10));
+    }
+  }, [bookId]);
   const [loading, setLoading] = useState(true);
   const [storyInfo, setStoryInfo] = useState(null);
   const userId = localStorage.getItem("userId");
@@ -65,21 +66,21 @@ setCurrentChapterIndex(parseInt(savedIndex, 10));
   }, [bookId]);
 
   const saveBookmark = async (index) => {
-try {
-await fetch(`${BASE_URL}/bookmark`, {
-method: "POST",
-headers: { "Content-Type": "application/json" },
-body: JSON.stringify({
-userId,
-storyId: bookId,
-chapterIndex: index, 
-}),
-});
-console.log("Bookmark saved!");
-} catch (err) {
-console.error("Failed to save bookmark:", err);
-}
-};
+    try {
+      await fetch(`${BASE_URL}/bookmark`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          storyId: bookId,
+          chapterIndex: index,
+        }),
+      });
+      console.log("Bookmark saved!");
+    } catch (err) {
+      console.error("Failed to save bookmark:", err);
+    }
+  };
 
   useEffect(() => {
     const startTime = Date.now();
@@ -128,7 +129,6 @@ console.error("Failed to save bookmark:", err);
                 onClick={() => {
                   setCurrentChapterIndex(index);
                   localStorage.setItem(`bookmark-${bookId}`, index);
-                
                 }}
               >
                 {chapter.title}
@@ -142,6 +142,8 @@ console.error("Failed to save bookmark:", err);
           <p>{currentChapter.content}</p>
         </main>
       </div>
+      <CommentSection storyId={bookId} />
+       <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 };

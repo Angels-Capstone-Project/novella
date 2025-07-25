@@ -115,13 +115,13 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
 
             {showDropdown && (
               <div className="dropdown-menu">
-                <button onClick={handleAddToLibrary}>Library</button>
+                <button onClick={handleAddToLibrary}>Add to Library</button>
                 {readingLists.map((list) => (
                   <button
                     key={list.id}
                     onClick={() => handleAddToReadingList(list.id)}
                   >
-                    {list.name}
+                    Add to {list.name}
                   </button>
                 ))}
               </div>

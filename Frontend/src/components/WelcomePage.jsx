@@ -75,7 +75,7 @@ const WelcomePage = () => {
         </div>
       </section>
 
-      <footer className="welcome-footer">© 2025 Novella</footer>
+      {/* <footer className="welcome-footer">© 2025 Novella</footer> */}
 
       {showLoginModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
@@ -105,7 +105,9 @@ const WelcomePage = () => {
             />
           </div>
         </div>
+        
       )}
+      <footer className="welcome-footer">© 2025 Novella</footer>
     </div>
   );
 };

@@ -13,9 +13,9 @@
 .story-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid #ccc;
-  padding: 15px;
-  background-color: #fff;
+  border: 1px solid white;
+  padding: 10px;
+  background-color: #fff5f0;
   border-radius: 8px;
   position: relative;
 }

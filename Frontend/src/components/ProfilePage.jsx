@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/api";
 import "./ProfilePage.css";
+import Header from "./Header.jsx";
 
 
 const ProfilePage = ({ userId }) => {
@@ -20,6 +21,8 @@ const ProfilePage = ({ userId }) => {
   if (!user) return <p>Loading profile...</p>;
 
   return (
+    <>
+    <Header />
     <div className="profile-container">
       <h2>Profile Information</h2>
       <p>
@@ -36,6 +39,8 @@ const ProfilePage = ({ userId }) => {
         <strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}
       </p>
     </div>
+    <footer className="welcome-footer">© 2025 Novella</footer>
+    </>
   );
 };
 
