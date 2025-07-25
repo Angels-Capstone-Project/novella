@@ -12,6 +12,7 @@ import SearchResults from "./components/searchResults";
 import CreateStoryPage from "./components/CreateStoryPage";
 import WriteStoryPage from "./components/WriteStoryPage";
 import MyStories from "./components/MyStories";
+import ProfilePage from "./components/ProfilePage";
 
 
 const App=() => {
@@ -31,6 +32,7 @@ const App=() => {
         <Route path ="/write/:id" element= {<WriteStoryPage />} />
          <Route path ="/write/:id/:chapterId" element= {<WriteStoryPage />} />
         <Route path ="/my-stories" element= {<MyStories user={userId} />} />
+        <Route path = "/profile" element={<ProfilePage />} />
 
       </Routes>
     </Router>

@@ -7,7 +7,13 @@ import { BASE_URL } from "../utils/api";
 const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
   const navigate = useNavigate();
   const [readingLists, setReadingLists] = useState([]);
+  const [liked, setLiked] = useState(false);
+  const [read, setRead] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const userId = localStorage.getItem("userId");
+
+  const selectedBook = books.find((book) => book.id === selectedBookId);
 
   useEffect(() => {
     const fetchReadingLists = async () => {
@@ -29,95 +35,99 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
   const handleAddToLibrary = async () => {
     try {
       await axios.post(`${BASE_URL}/library`, {
-        userId,
         storyId: selectedBookId,
+        userId,
       });
       alert("Book added to Library!");
     } catch (err) {
-      console.error("Failed to add to library", err);
+      console.error("Failed to add to library:", err);
       alert("Failed to add to library.");
     }
   };
 
-  const handleLike = async (bookId) => {
+  const handleLike = async () => {
     try {
-      await axios.post(`${BASE_URL}/stories/${bookId}/like`, { userId });
-      alert("Book liked!");
+      await axios.post(`${BASE_URL}/stories/${selectedBookId}/like`, {
+        userId,
+      });
+      setLiked(!liked);
     } catch (err) {
-      console.error("Failed to like book", err);
+      console.error("Failed to like book:", err);
       alert("Failed to like book.");
     }
   };
 
-  const handleMarkAsRead = async (bookId) => {
+  const handleMarkAsRead = async () => {
     try {
-      await axios.post(`${BASE_URL}/stories/${bookId}/read`, { userId });
-      alert("Book marked as read!");
+      await axios.post(`${BASE_URL}/stories/${selectedBookId}/read`, {
+        userId,
+      });
+      setRead(!read);
     } catch (err) {
-      console.error("Failed to mark book as read", err);
+      console.error("Failed to mark book as read:", err);
       alert("Failed to mark book as read.");
     }
   };
 
   const handleAddToReadingList = async (listId) => {
     try {
-      await axios.post(`${BASE_URL}/readingList/${listId}/add-book`, {
+      await axios.post(`${BASE_URL}/readinglist/${listId}/add-book`, {
         storyId: selectedBookId,
       });
-      alert("Book added to Reading List!");
+      alert("Book added to reading list!");
     } catch (err) {
-      console.error("Failed to add to reading list", err);
+      console.error("Failed to add to reading list:", err);
       alert("Failed to add to reading list.");
-      fcrjkteiedrevjgfhheltekdvuuhkebe;
     }
   };
+
+  if (!selectedBook) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>Book Preview</h2>
-        <div className="book-scroll-row">
-          {books.map((book) => (
-            <div
-              key={book.id}
-              className={`book-card ${
-                book.id === selectedBookId ? "selected" : ""
-              }`}
+        <h2 className="modal-title">Sneak Peek 👀</h2>
+
+        <div className="modal-cover">
+          <img src={selectedBook.coverImage} alt={selectedBook.title} />
+        </div>
+
+        <h3 className="book-title">{selectedBook.title}</h3>
+        <p className="book-author">{selectedBook.author}</p>
+        <p className="book-description">{selectedBook.description}</p>
+
+        <div className="modal-actions">
+          <button onClick={handleLike}>{liked ? "❤️" : "🤍"}</button>
+          <button onClick={handleMarkAsRead}>
+            {read ? "📖 " : "📕"}
+          </button>
+
+          <button className="start-reading" onClick={handleStartReading}>
+            Start Reading
+          </button>
+
+          <div className="dropdown-container">
+            <button
+              className="dropdown-toggle"
+              onClick={() => setShowDropdown(!showDropdown)}
             >
-              <img src={book.coverImage} alt={book.title} />
-              <h4>{book.title}</h4>
-              <p className="author">{book.author}</p>
-              <p className="description">{book.description}</p>
-              <div className="actions">
-                <button className="start-reading" onClick={handleStartReading}>
-                  Start Reading
-                </button>
-                <button onClick={() => handleLike(book.id)}>❤️ Like</button>
-                <button onClick={() => handleMarkAsRead(book.id)}>
-                  ✅ Mark as Read
-                </button>
-                <button className="add-library" onClick={handleAddToLibrary}>
-                  + Library
-                </button>
-                <div className="reading-list-dropdown">
-                  <label htmlFor="readingList">Add to Reading List:</label>
-                  <select
-                    onChange={(e) => handleAddToReadingList(e.target.value)}
-                    defaultValue=""
+              +
+            </button>
+
+            {showDropdown && (
+              <div className="dropdown-menu">
+                <button onClick={handleAddToLibrary}>Library</button>
+                {readingLists.map((list) => (
+                  <button
+                    key={list.id}
+                    onClick={() => handleAddToReadingList(list.id)}
                   >
-                    <option value="" disabled>
-                      Select a list
-                    </option>
-                    {readingLists.map((list) => (
-                      <option key={list.id} value={list.id}>
-                        {list.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    {list.name}
+                  </button>
+                ))}
               </div>
-            </div>
-          ))}
+            )}
+          </div>
         </div>
       </div>
     </div>

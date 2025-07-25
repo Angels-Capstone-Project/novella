@@ -1,4 +1,4 @@
-import express  from "express";
+import express from "express";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "../generated/prisma/index.js";
 
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
         email,
         password: hashedPassword,
         pronouns,
-        birthday: birthday ? new Date(birthday) : undefined
+        birthday: birthday ? new Date(birthday) : undefined,
       },
     });
 
@@ -126,9 +126,36 @@ router.post("/logout", (req, res) => {
       console.error("Error logging out", err);
       return res.status(500).json({ error: "Failed to log out" });
     }
-    res.clearCookie("connect.sid"); 
+    res.clearCookie("connect.sid");
     res.json({ message: "Logout successful" });
   });
+});
+
+// Profile route – get basic user info (no password)
+router.get("/profile/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        birthday: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error fetching profile", error: err.message });
+       console.error("Error in /me:", err);
+  }
 });
 
 export default router;
