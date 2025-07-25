@@ -1,0 +1,16 @@
+/* src/components/CustomTooltip.css */
+.tooltip {
+  position: fixed;
+  padding: 8px 12px;
+  background-color:#ef4723;;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(10px, 10px);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+

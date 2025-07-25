@@ -6,6 +6,7 @@ import Header from "./Header.jsx";
 import { clearCache } from "../utils/cache.js";
 import { fetchWithCache } from "../utils/fetchWithCache";
 import useOnlineStatus from "../utils/useOnlineStatus.js";
+import "./Home.css";
 
 const Home = ({ userId }) => {
   const [topPicks, setTopPicks] = useState([]);
@@ -16,7 +17,7 @@ const Home = ({ userId }) => {
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [booksInRow, setBooksInRow] = useState([]);
   const [hasReloadedOnline, sethasReloadedOnline] = useState(false);
-  const isOnline =useOnlineStatus();
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     if (!userId) return;
@@ -89,13 +90,15 @@ const Home = ({ userId }) => {
             <div
               key={story.id || index}
               style={{
-                minWidth: "clamp(120px, 20vw, 160px)",
+                minWidth: "150px",
                 flexShrink: 0,
-                padding: "10px",
-                background: "#f4f4f4",
-                borderRadius: "6px",
+                padding: "8px",
+                background: "white",
+                borderRadius: "10px",
                 textAlign: "center",
                 cursor: "pointer",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                transition: "transform 0.2s ease-in-out",
               }}
               onClick={() => onCardClick(story.id, stories)}
             >
@@ -105,13 +108,14 @@ const Home = ({ userId }) => {
                 </div>
               )}
               <img
-                src={story.coverImage || "https://via.placeholder.com/150"}
+                src={story.coverImage || "https://picsum.photos/900/300"}
                 alt={story.title}
                 style={{
-                  width: "100%",
-                  height: "150px",
+                  width: "170px",
+                  height: "200px",
                   objectFit: "cover",
-                  borderRadius: "4px",
+                  borderRadius: "3px",
+                  marginBottom: "3px",
                 }}
               />
               <p>{story.title}</p>
@@ -129,6 +133,9 @@ const Home = ({ userId }) => {
   };
 
   return (
+    <div className="home-app">
+    <Header />
+      
     <div className="home-container">
       {!isOnline && (
         <div
@@ -143,7 +150,6 @@ const Home = ({ userId }) => {
           ⚠️ You’re offline. Some features may not work properly.
         </div>
       )}
-      <Header />
       <RotatingBanner />
       {renderStoryList(
         "Top Picks for You",
@@ -168,7 +174,7 @@ const Home = ({ userId }) => {
         </div>
       ))}
 
-      <footer className="welcome-footer">© 2025 Novella</footer>
+      
 
       {showModal && (
         <BookPreviewModal
@@ -177,6 +183,8 @@ const Home = ({ userId }) => {
           onClose={() => setShowModal(false)}
         />
       )}
+    </div>
+    <footer className="welcome-footer">© 2025 Novella</footer>
     </div>
   );
 };

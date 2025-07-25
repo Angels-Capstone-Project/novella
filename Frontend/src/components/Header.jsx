@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
-
+import { useTooltip } from "./TooltipContext.jsx";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [isWriteOpen, setIsWriteOpen] = useState(false);
+  const { showTooltip, updatePosition, hideTooltip } = useTooltip();
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && query.trim()) {
@@ -15,8 +16,8 @@ const Header = () => {
     }
   };
   const handleProfileClick = () => {
-    navigate('/profile');
-  }
+    navigate("/profile");
+  };
 
   const handleLogout = async () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -68,6 +69,9 @@ const Header = () => {
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleSearch}
         className="search-input"
+        onMouseEnter={(e) => showTooltip("Search by title or author", e)}
+        onMouseMove={updatePosition}
+        onMouseLeave={hideTooltip}
       />
 
       <div className="write-dropdown">
@@ -93,12 +97,14 @@ const Header = () => {
           className="profile-icon"
           onClick={() => setIsOpen(!isOpen)}
         />
-
+        ⌄
         {isOpen && (
           <div className="dropdown-menu">
             <button onClick={handleProfileClick}>Profile </button>
             <button onClick={() => navigate("/library")}>Library</button>
-            <button onClick={handleLogout} className="logout">Log Out</button>
+            <button onClick={handleLogout} className="logout">
+              Log Out
+            </button>
           </div>
         )}
       </div>

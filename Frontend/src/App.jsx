@@ -13,12 +13,15 @@ import CreateStoryPage from "./components/CreateStoryPage";
 import WriteStoryPage from "./components/WriteStoryPage";
 import MyStories from "./components/MyStories";
 import ProfilePage from "./components/ProfilePage";
+import { TooltipProvider } from "./components/TooltipContext";
+import CustomTooltip from "./components/CustomTooltip";
 
 
 const App=() => {
 
   const userId = localStorage.getItem("userId");
   return(
+    <TooltipProvider>
     <Router>
       <Routes>
         <Route path ="/" element = {< WelcomePage />} />
@@ -36,6 +39,8 @@ const App=() => {
 
       </Routes>
     </Router>
+    <CustomTooltip/>
+    </TooltipProvider>
   );
 }
 

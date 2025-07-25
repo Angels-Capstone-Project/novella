@@ -38,7 +38,8 @@ function Login({ onSwitch }) {
 
       localStorage.setItem("userId", res.data.user.id);
 
-      navigate("/home");
+      navigate("/home", {replace:true});
+      window.location.reload();
 
       // TODO: save user info
     } catch (error) {

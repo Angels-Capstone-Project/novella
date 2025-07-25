@@ -93,7 +93,6 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
         </div>
 
         <h3 className="book-title">{selectedBook.title}</h3>
-        <p className="book-author">{selectedBook.author}</p>
         <p className="book-description">{selectedBook.description}</p>
 
         <div className="modal-actions">
