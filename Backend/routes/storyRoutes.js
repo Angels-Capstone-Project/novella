@@ -196,7 +196,7 @@ router.get("/genre/:genre", async (req, res) => {
       engagementData,
     });
 
-    const topN = 10;
+    const topN = 20;
     const topGenreStories = recommendedStories.slice(0, topN);
     res.json(topGenreStories);
   } catch (error) {

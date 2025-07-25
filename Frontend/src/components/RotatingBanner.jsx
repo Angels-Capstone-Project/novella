@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./RotatingBanner.css";
+import { useTooltip } from "./TooltipContext.jsx";
 
 const bannerData = [
   {
@@ -27,10 +28,12 @@ const RotatingBanner = () => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
 
+const { showTooltip, updatePosition, hideTooltip } = useTooltip();
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerData.length);
-    }, 5000); 
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -42,7 +45,20 @@ const RotatingBanner = () => {
       <div className="banner-content">
         <h2>{title}</h2>
         <p>{description}</p>
-        <button className="read-now-button" onClick={()=>navigate("/read/:bookId")}>READ NOW</button>
+        <button
+          className="read-now-button"
+          onClick={() => navigate("/read/:bookId")}
+          onMouseEnter={(e) => {
+            console.log("Hovered");
+            showTooltip("Click to start reading this story", e)
+          }}
+          onMouseMove={(e) =>
+            showTooltip("Click to start reading this story", e)
+          }
+          onMouseLeave={hideTooltip}
+        >
+          READ NOW
+        </button>
       </div>
     </div>
   );
