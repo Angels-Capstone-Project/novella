@@ -58,123 +58,126 @@ const LibraryPage = () => {
 
   return (
     <>
-    <Header />
-    <div className="library-page">
-      <h1>Library</h1>
+      <Header />
+      <div className="library-page">
+        <h1>Library</h1>
 
-      <div className="tabs">
-        <button
-          className={tab === "current" ? "active" : ""}
-          onClick={() => setTab("current")}
-        >
-          Current Reads
-        </button>
-        <button
-          className={tab === "lists" ? "active" : ""}
-          onClick={() => setTab("lists")}
-        >
-          Reading Lists
-        </button>
-      </div>
-
-      {tab === "current" && (
-        <div className="book-grid">
-          {libraryBooks.map((book) => (
-            <div className="book-card"
-             key={book.id}
-             onClick={() => navigate(`/read/${book.story.id}`)}>
-              <img src={book.story.coverImage} alt={book.story.title} />
-              <h4>{book.story.title}</h4>
-              <p>{book.story.author}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {tab === "lists" && (
-        <>
+        <div className="tabs">
           <button
-            className="create-list-btn"
-            onClick={() => setShowModal(true)}
+            className={tab === "current" ? "active" : ""}
+            onClick={() => setTab("current")}
           >
-            + Create New List
+            Current Reads
           </button>
+          <button
+            className={tab === "lists" ? "active" : ""}
+            onClick={() => setTab("lists")}
+          >
+            Reading Lists
+          </button>
+        </div>
 
-          <div className="reading-lists">
-            {readingLists.map((list) => (
+        {tab === "current" && (
+          <div className="book-grid">
+            {libraryBooks.map((book) => (
               <div
-                key={list.id}
-                className="reading-list-item"
-                onClick={() => handleListClick(list.id)}
+                className="book-card"
+                key={book.id}
+                onClick={() => navigate(`/read/${book.story.id}`)}
               >
-                <img
-                  src={
-                    list.coverImage ||
-                    `https://picsum.photos/200/300?random=${list.id}`
-                  }
-                  alt={list.name}
-                  className="reading-list-cover"
-                />
-                <h3>{list.name}</h3>
+                <img src={book.story.coverImage} alt={book.story.title} />
+                <h4>{book.story.title}</h4>
+                <p>{book.story.author}</p>
               </div>
             ))}
           </div>
+        )}
 
-          {selectedListId && (
-            <div
-              className="modal-overlay"
-              onClick={() => setSelectedListId(null)}
+        {tab === "lists" && (
+          <>
+            <button
+              className="create-list-btn"
+              onClick={() => setShowModal(true)}
             >
-              <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <h2>Reading List Stories</h2>
-                <div className="modal-scroll">
-                  {readingLists
-                    .find((list) => list.id === selectedListId)
-                    ?.story?.map((story, index) => {
-                      if (!story) {
-                        console.warn("Missing story data at index", index);
-                        return null;
-                      }
-                      return (
-                        <div className="book-card" key={story.id}
-                        onClick={() => navigate(`/read/${story.id}`)}>
-                          <img src={story.coverImage} alt={story.title} />
-                          <h4>{story.title}</h4>
-                          <p>By {story.author}</p>
-                          <p>{story.description?.slice(0, 100)}...</p>
-                          <p>
-                            {" "}
-                            {story.likedBy?.length || 0} |{" "}
-                            {story.readBy?.length || 0}
-                          </p>
-                        </div>
-                      );
-                    })}
+              + Create New List
+            </button>
+
+            <div className="reading-lists">
+              {readingLists.map((list) => (
+                <div
+                  key={list.id}
+                  className="reading-list-item"
+                  onClick={() => handleListClick(list.id)}
+                >
+                  <img
+                    src={
+                      list.coverImage ||
+                      `https://picsum.photos/200/300?random=${list.id}`
+                    }
+                    alt={list.name}
+                    className="reading-list-cover"
+                  />
+                  <h3>{list.name}</h3>
+                </div>
+              ))}
+            </div>
+
+            {selectedListId && (
+              <div
+                className="modal-overlay"
+                onClick={() => setSelectedListId(null)}
+              >
+                <div className="modal" onClick={(e) => e.stopPropagation()}>
+                  <h2>
+                    {readingLists.find((list) => list.id === selectedListId)
+                      ?.name || "Reading List Stories"}
+                  </h2>
+                  <div className="modal-scroll">
+                    {readingLists
+                      .find((list) => list.id === selectedListId)
+                      ?.story?.map((story, index) => {
+                        if (!story) {
+                          console.warn("Missing story data at index", index);
+                          return null;
+                        }
+                        return (
+                          <div
+                            className="book-card"
+                            key={story.id}
+                            onClick={() => navigate(`/read/${story.id}`)}
+                          >
+                            <img src={story.coverImage} alt={story.title} />
+                            <h4>{story.title}</h4>
+                            <div className="description">
+                            <p>{story.description?.slice(0, 120)}...</p>
+                            </div>
+                           
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               </div>
+            )}
+          </>
+        )}
+
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <h3>Create Reading List</h3>
+              <input
+                type="text"
+                placeholder="Enter list name"
+                value={newListName}
+                onChange={(e) => setNewListName(e.target.value)}
+              />
+              <button onClick={handleCreateList}>Create</button>
             </div>
-          )}
-        </>
-      )}
-
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Create Reading List</h3>
-            <input
-              type="text"
-              placeholder="Enter list name"
-              value={newListName}
-              onChange={(e) => setNewListName(e.target.value)}
-            />
-            <button onClick={handleCreateList}>Create</button>
           </div>
-        </div>
-      )}
-
-      
-    </div>
-    <footer className="welcome-footer">© 2025 Novella</footer>
+        )}
+      </div>
+      <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 };
