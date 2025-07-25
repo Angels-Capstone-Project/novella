@@ -1,5 +1,5 @@
 # novella
-###Core Features
+#Core Features
 
 [x] As a writer, I want to create an account, so that I can start publishing stories. - Completed
 
@@ -24,7 +24,7 @@
 [x] As a reader, I want to add stories to my library, so that I can easily find and continue reading them later. Week 2 - completed
 
 
-###Stretch Features
+#Stretch Features
 
 [] As a reader, I want to follow writers, so that I can get notified when they publish new stories.
 
@@ -36,7 +36,8 @@
 
 [x] Story reading bookmark
 
-###Technical Challenge
-[x] Feed Page/Home Page Logic
+#Technical Challenge
+
+[x] Feed Page/Home Page Logic(Recommendations)
 
 [x] Caching

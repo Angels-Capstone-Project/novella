@@ -49,7 +49,7 @@ const SearchResults = () => {
             <div
               key={story.id}
               className="result-card"
-              onClick={() => handleOpenModal(story)} // 👈 makes it clickable
+              onClick={() => handleOpenModal(story)}
               style={{ cursor: "pointer" }}
             >
               <img

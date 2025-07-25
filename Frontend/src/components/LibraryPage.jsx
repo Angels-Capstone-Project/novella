@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./LibraryPage.css";
 import { BASE_URL } from "../utils/api";
 import Header from "./Header";
+import { useNavigate } from "react-router-dom";
 
 const LibraryPage = () => {
   const [tab, setTab] = useState("current");
@@ -13,6 +14,7 @@ const LibraryPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [newListName, setNewListName] = useState("");
   const userId = localStorage.getItem("userId");
+  const navigate = useNavigate();
 
   const fetchLibrary = async () => {
     const res = await fetch(`${BASE_URL}/library/user/${userId}`);
@@ -78,7 +80,9 @@ const LibraryPage = () => {
       {tab === "current" && (
         <div className="book-grid">
           {libraryBooks.map((book) => (
-            <div className="book-card" key={book.id}>
+            <div className="book-card"
+             key={book.id}
+             onClick={() => navigate(`/read/${book.story.id}`)}>
               <img src={book.story.coverImage} alt={book.story.title} />
               <h4>{book.story.title}</h4>
               <p>{book.story.author}</p>
@@ -132,7 +136,8 @@ const LibraryPage = () => {
                         return null;
                       }
                       return (
-                        <div className="book-card" key={story.id}>
+                        <div className="book-card" key={story.id}
+                        onClick={() => navigate(`/read/${story.id}`)}>
                           <img src={story.coverImage} alt={story.title} />
                           <h4>{story.title}</h4>
                           <p>By {story.author}</p>
