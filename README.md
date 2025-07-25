@@ -1,5 +1,6 @@
 # novella
 ###Core Features
+
 [x] As a writer, I want to create an account, so that I can start publishing stories. - Completed
 
 [x] As a writer, I want to create an account, so that I can start publishing stories. - Completed
