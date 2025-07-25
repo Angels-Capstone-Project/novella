@@ -132,6 +132,7 @@ export default function CreateStoryPage() {
         </div>
       </form>
     </div>
+    <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 }

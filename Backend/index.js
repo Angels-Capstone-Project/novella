@@ -10,6 +10,7 @@ import readingListRoutes from "./routes/readingListRoutes.js";
 import syncRoutes from "./routes/syncRoutes.js";
 import bookmarkRoutes from "./routes/bookmarkRoutes.js";
 import bodyParser from "body-parser";
+import commentRoutes from "./routes/commentRoutes.js";
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use("/library", libraryRoutes);
 app.use("/readingList", readingListRoutes);
 app.use(syncRoutes);
 app.use(bookmarkRoutes);
+app.use("/comments", commentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

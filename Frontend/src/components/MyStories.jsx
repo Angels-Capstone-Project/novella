@@ -77,11 +77,11 @@ const MyStories = ({ user }) => {
 
   const handleToggleDropdown = async (storyId) => {
     if (openDropdown === storyId) {
-      setOpenDropdown(null); // close it
+      setOpenDropdown(null); 
       return;
     }
 
-    setOpenDropdown(storyId); // open it
+    setOpenDropdown(storyId); 
 
     await fetchWithCache({
       cacheKey: `chapters-${storyId}`,
@@ -177,6 +177,7 @@ const MyStories = ({ user }) => {
           </div>
         )}
       </div>
+      <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 };

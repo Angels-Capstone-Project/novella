@@ -239,7 +239,9 @@ export default function WritePage() {
             Publish
           </button>
         </div>
+       
       </div>
+       <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 }

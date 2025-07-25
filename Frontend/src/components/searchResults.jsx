@@ -76,6 +76,8 @@ const SearchResults = () => {
          selectedBookId={selectedBookId} 
         onClose={handleCloseModal} />
       )}
+
+       <footer className="welcome-footer">© 2025 Novella</footer>
     </>
   );
 };
