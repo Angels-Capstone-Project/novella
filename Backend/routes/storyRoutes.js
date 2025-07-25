@@ -103,7 +103,6 @@ router.get("/top-us", async (req, res) => {
         likedBy: { select: { id: true } },
         readBy: { select: { id: true } },
         chapters: true,
-        // author: true,
       },
     });
 
@@ -312,6 +311,19 @@ router.post("/stories", upload.single("coverImage"), async (req, res) => {
   if (!authorId) {
     return res.status(401).json({ error: "Unauthorized. Missing authorId." });
   }
+
+  // const existingStory = await prisma.story.findFirst({
+  //   where: {
+  //     title: req.body.title,
+  //     authorId: req.user.id,
+  //   },
+  // });
+
+  // if (existingStory) {
+  //   return res
+  //     .status(400)
+  //     .json({ error: "Story with this title already exists." });
+  // }
 
   const systemTags = extractTagsFromContent(description);
 

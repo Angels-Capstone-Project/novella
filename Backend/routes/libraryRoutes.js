@@ -1,8 +1,7 @@
 import express from "express";
 import { PrismaClient } from "../generated/prisma/index.js";
 
-
-const prisma = new PrismaClient;
+const prisma = new PrismaClient();
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -15,6 +14,18 @@ router.post("/", async (req, res) => {
         story: { connect: { id: storyId } },
       },
     });
+
+    // const existing = await prisma.library.findFirst({
+    //   where: {
+    //     storyId: req.body.storyId,
+    //     userId: req.user.id,
+    //   },
+    // });
+    // if (existing) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Book is already in your library." });
+    // }
 
     res.status(201).json(library);
   } catch (err) {
@@ -32,7 +43,7 @@ router.get("/user/:userId", async (req, res) => {
         userId,
       },
       include: {
-        story: true, 
+        story: true,
       },
     });
 
