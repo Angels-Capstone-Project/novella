@@ -35,13 +35,18 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
   const handleAddToLibrary = async () => {
     try {
       await axios.post(`${BASE_URL}/library`, {
-        storyId: selectedBookId,
         userId,
+        storyId: selectedBookId,
       });
       alert("Book added to Library!");
     } catch (err) {
-      console.error("Failed to add to library:", err);
-      alert("Failed to add to library.");
+      if (err.response && err.response.status === 409) {
+        // Duplicate
+        alert("Book is already in your Library!");
+      } else {
+        console.error("Failed to add to library:", err);
+        alert("Something went wrong while adding to library.");
+      }
     }
   };
 
@@ -97,9 +102,7 @@ const BookPreviewModal = ({ books, selectedBookId, onClose }) => {
 
         <div className="modal-actions">
           <button onClick={handleLike}>{liked ? "❤️" : "🤍"}</button>
-          <button onClick={handleMarkAsRead}>
-            {read ? "📖 " : "📕"}
-          </button>
+          <button onClick={handleMarkAsRead}>{read ? "📖 " : "📕"}</button>
 
           <button className="start-reading" onClick={handleStartReading}>
             Start Reading

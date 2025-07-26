@@ -3,8 +3,9 @@ import "./LibraryPage.css";
 import { BASE_URL } from "../utils/api";
 import Header from "./Header";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const LibraryPage = ({setLoading}) => {
+const LibraryPage = ({ setLoading }) => {
   const [tab, setTab] = useState("current");
   const [libraryBooks, setLibraryBooks] = useState([]);
   const [readingLists, setReadingLists] = useState([]);
@@ -34,6 +35,35 @@ const LibraryPage = ({setLoading}) => {
     setSelectedListId((prev) => (prev === listId ? null : listId));
   };
 
+  const handleRemoveFromLibrary = async (storyId) => {
+    try {
+      await axios.delete(`${BASE_URL}/library`, {
+        data: {
+          userId, // make sure this is available
+          storyId,
+        },
+      });
+      alert("Book removed from library!");
+
+      setLibraryBooks((prev) => prev.filter((book) => book.story.id !== storyId));
+    } catch (err) {
+      console.error("Failed to remove book:", err);
+      alert("Could not remove book from library.");
+    }
+  };
+
+  const handleDeleteReadingList = async (listId) => {
+    try {
+      await axios.delete(`${BASE_URL}/readinglist/${listId}`);
+      alert("Reading list deleted!");
+
+      setReadingLists((prev) => prev.filter((list) => list.id !== listId));
+    } catch (err) {
+      console.error("Failed to delete reading list:", err);
+      alert("Could not delete reading list.");
+    }
+  };
+
   const handleCreateList = async () => {
     setLoading(true);
     if (!newListName.trim()) return;
@@ -53,7 +83,7 @@ const LibraryPage = ({setLoading}) => {
     setShowModal(false);
     fetchLists();
   };
-    setLoading(false);
+  setLoading(false);
   useEffect(() => {
     fetchLibrary();
     fetchLists();
@@ -87,10 +117,12 @@ const LibraryPage = ({setLoading}) => {
                 className="book-card"
                 key={book.id}
                 onClick={() => navigate(`/read/${book.story.id}`)}
+                
               >
                 <img src={book.story.coverImage} alt={book.story.title} />
                 <h4>{book.story.title}</h4>
                 <p>{book.story.author}</p>
+                <button onClick={() => handleRemoveFromLibrary(book.story.id)}>Remove</button>
               </div>
             ))}
           </div>
@@ -119,8 +151,10 @@ const LibraryPage = ({setLoading}) => {
                     }
                     alt={list.name}
                     className="reading-list-cover"
+                    
                   />
                   <h3>{list.name}</h3>
+                  <button onClick={() => handleDeleteReadingList(list.id)}>Delete List</button>
                 </div>
               ))}
             </div>
@@ -152,9 +186,8 @@ const LibraryPage = ({setLoading}) => {
                             <img src={story.coverImage} alt={story.title} />
                             <h4>{story.title}</h4>
                             <div className="description">
-                            <p>{story.description?.slice(0, 120)}...</p>
+                              <p>{story.description?.slice(0, 120)}...</p>
                             </div>
-                           
                           </div>
                         );
                       })}
