@@ -53,6 +53,7 @@ const MyStories = ({ user }) => {
         ...prev,
         [storyId]: prev[storyId]?.filter((ch) => ch.id !== chapterId),
       }));
+      alert("Chapter deleted!");
 
       console.log("Chapter deleted");
     } catch (error) {
@@ -65,6 +66,7 @@ const MyStories = ({ user }) => {
       const res = await fetch(`${BASE_URL}/stories/${storyId}`, {
         method: "DELETE",
       });
+      alert("Story deleted!");
 
       if (!res.ok) throw new Error("Failed to delete story");
 
