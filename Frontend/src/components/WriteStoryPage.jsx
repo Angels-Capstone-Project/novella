@@ -12,7 +12,6 @@ export default function WritePage() {
   const [chapter, setChapter] = useState(null);
   const [chapterTitle, setChapterTitle] = useState("");
   const [content, setContent] = useState("");
-  const [banner, setBanner] = useState("");
   const [authorId, setAuthorId] = useState("");
   const [saveStatus, setSaveStatus] = useState("");
 
@@ -46,7 +45,6 @@ export default function WritePage() {
         setChapter(chapterData);
         setChapterTitle(chapterData.title || "");
         setContent(chapterData.content || "");
-        setBanner(chapterData.bannerImage || "");
         setAuthorId(chapterData.authorId || "");
 
         // Cache chapter
@@ -57,7 +55,6 @@ export default function WritePage() {
         if (cachedChapter) {
           setChapterTitle(cachedChapter.title || "");
           setContent(cachedChapter.content || "");
-          setBanner(cachedChapter.bannerImage || "");
           setAuthorId(cachedChapter.authorId || "");
         }
       }
@@ -84,7 +81,6 @@ export default function WritePage() {
       storyId: id,
       title: chapterTitle,
       content,
-      bannerImage: banner,
       authorId,
       updatedAt: new Date().toISOString(),
     };
@@ -134,7 +130,6 @@ export default function WritePage() {
       chapterId,
       title: chapterTitle,
       content,
-      bannerImage: banner,
       isDraft,
       isPublished,
       storyId: id,
@@ -176,19 +171,6 @@ export default function WritePage() {
           <p className="story-status">
             Draft • {content?.length || 0} Words • {saveStatus}
           </p>
-        </div>
-
-        {banner && (
-          <img src={banner} alt="Chapter Banner" className="chapter-banner" />
-        )}
-        <div className="banner-upload">
-          <input
-            type="text"
-            placeholder="Optional: Paste a banner image URL here"
-            value={banner}
-            onChange={(e) => setBanner(e.target.value)}
-            className="chapter-banner-input"
-          />
         </div>
 
         <input

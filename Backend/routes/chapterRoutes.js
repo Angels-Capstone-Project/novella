@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 // Create a new chapter
 router.post("/", async (req, res) => {
-  const { title, content, storyId, bannerImage, isDraft, isPublished } =
+  const { title, content, storyId, isDraft, isPublished } =
     req.body;
 
   if (!title || !content || !storyId) {
@@ -35,7 +35,6 @@ router.post("/", async (req, res) => {
         where: { id: existingDraft.id },
         data: {
           content,
-          bannerImage,
           isDraft: false,
           isPublished: true,
         },
@@ -60,7 +59,6 @@ router.post("/", async (req, res) => {
         content,
         order,
         storyId,
-        bannerImage,
         isDraft,
         isPublished,
         tags,
@@ -76,7 +74,7 @@ router.post("/", async (req, res) => {
 
 // POST /chapters/save-draft
 router.post("/save-draft", async (req, res) => {
-  const { chapterId, storyId, title, content, authorId, bannerImage } =
+  const { chapterId, storyId, title, content, authorId,} =
     req.body;
 
   if (!chapterId || !storyId || !authorId || !title) {
@@ -96,7 +94,6 @@ router.post("/save-draft", async (req, res) => {
         data: {
           title,
           content,
-          bannerImage: bannerImage || null,
           isDraft: true,
         },
       });
@@ -118,7 +115,6 @@ router.post("/save-draft", async (req, res) => {
         title,
         content,
         authorId,
-        bannerImage: bannerImage || null,
         isDraft: true,
         isPublished: false,
         order,
@@ -177,14 +173,14 @@ router.get("/:id", async (req, res) => {
 //update a chapter
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, content, order, bannerImage, isDraft, isPublished } = req.body;
+  const { title, content, order, isDraft, isPublished } = req.body;
   const tags= extractTagsFromContent(content);
 
 
   try {
     const chapter = await prisma.chapter.update({
       where: { id },
-      data: { title, content, order, bannerImage, isDraft, isPublished, tags, },
+      data: { title, content, order, isDraft, isPublished, tags, },
     });
 
     res.status(200).json(chapter);
@@ -242,14 +238,12 @@ router.post("/sync/:storyId", async (req, res) => {
             content: chapter.content,
             order: chapter.order,
             isDraft: chapter.isDraft ?? true,
-            bannerImage: chapter.bannerImage || null,
           },
           create: {
             title: chapter.title,
             content: chapter.content,
             order: chapter.order,
             isDraft: chapter.isDraft ?? true,
-            bannerImage: chapter.bannerImage || null,
             storyId: storyId,
           },
         })

@@ -12,15 +12,21 @@
   overflow-x: hidden;
   box-sizing: border-box;
   margin: 0 auto;
+  height: 60px;
 }
 .header-left{
   font-size: 1.8rem;
 }
 
+.write-dropdown{
+  position: relative;
+  display: inline-block;
+}
 
 .dropdown-menu {
 position: absolute;
-top: 60px;
+top: 100%;
+left: 0;
 right: 0;
 background-color: white;
 border-radius: 8px;

@@ -36,6 +36,11 @@
 
 [x] Story reading bookmark
 
+[x] Reading list
+
+[x]  Rotating Banner
+
+
 #Technical Challenge
 
 [x] Feed Page/Home Page Logic(Recommendations)

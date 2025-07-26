@@ -30,22 +30,6 @@
   color: gray;
 }
 
-/* Chapter banner */
-.chapter-banner {
-  width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin: 20px 0;
-}
-
-.banner-upload input {
-  width: 100%;
-  padding: 8px 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
 
 /* Chapter Title */
 .chapter-title-input {

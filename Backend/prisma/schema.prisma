@@ -72,7 +72,6 @@ model Chapter {
   content  String
   order     Int 
   tags        String[]   @default([])
-  bannerImage    String?
   isDraft    Boolean   @default(true)
   isPublished    Boolean   @default(false)
   story   Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
