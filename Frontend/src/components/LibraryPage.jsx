@@ -45,11 +45,18 @@ const LibraryPage = ({ setLoading }) => {
       });
       alert("Book removed from library!");
 
-      setLibraryBooks((prev) => prev.filter((book) => book.story.id !== storyId));
+      setLibraryBooks((prev) =>
+        prev.filter((book) => book.story.id !== storyId)
+      );
     } catch (err) {
       console.error("Failed to remove book:", err);
       alert("Could not remove book from library.");
     }
+  };
+
+  const handleRemove = (e, storyId) => {
+    e.stopPropagation(); // 🔒 Stops it from triggering the parent
+    handleRemoveFromLibrary(storyId); // or reading list
   };
 
   const handleDeleteReadingList = async (listId) => {
@@ -62,6 +69,11 @@ const LibraryPage = ({ setLoading }) => {
       console.error("Failed to delete reading list:", err);
       alert("Could not delete reading list.");
     }
+  };
+
+  const handleDeleteList = (e, listId) => {
+    e.stopPropagation();
+    handleDeleteReadingList(listId);
   };
 
   const handleCreateList = async () => {
@@ -117,12 +129,13 @@ const LibraryPage = ({ setLoading }) => {
                 className="book-card"
                 key={book.id}
                 onClick={() => navigate(`/read/${book.story.id}`)}
-                
               >
                 <img src={book.story.coverImage} alt={book.story.title} />
                 <h4>{book.story.title}</h4>
                 <p>{book.story.author}</p>
-                <button onClick={() => handleRemoveFromLibrary(book.story.id)}>Remove</button>
+                <button onClick={(e) => handleRemove(e, book.story.id)}>
+                  Remove
+                </button>
               </div>
             ))}
           </div>
@@ -151,10 +164,11 @@ const LibraryPage = ({ setLoading }) => {
                     }
                     alt={list.name}
                     className="reading-list-cover"
-                    
                   />
                   <h3>{list.name}</h3>
-                  <button onClick={() => handleDeleteReadingList(list.id)}>Delete List</button>
+                  <button onClick={(e) => handleDeleteList(e, list.id)}>
+                    Delete List
+                  </button>
                 </div>
               ))}
             </div>
