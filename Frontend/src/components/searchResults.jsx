@@ -10,7 +10,7 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const SearchResults = () => {
+const SearchResults = ({setLoading}) => {
   const query = useQuery().get("q");
   const [results, setResults] = useState([]);
   const [selectedBookId, setSelectedBookId] = useState(null);
@@ -27,6 +27,7 @@ const SearchResults = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchResults = async () => {
       if (!query) return;
       try {
@@ -35,9 +36,12 @@ const SearchResults = () => {
       } catch (err) {
         console.error("Search failed:", err);
       }
+      setLoading(false);
     };
     fetchResults();
-  }, [query]);
+  }, [query]
+);
+   
 
   return (
     <>

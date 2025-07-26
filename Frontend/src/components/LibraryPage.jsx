@@ -4,7 +4,7 @@ import { BASE_URL } from "../utils/api";
 import Header from "./Header";
 import { useNavigate } from "react-router-dom";
 
-const LibraryPage = () => {
+const LibraryPage = ({setLoading}) => {
   const [tab, setTab] = useState("current");
   const [libraryBooks, setLibraryBooks] = useState([]);
   const [readingLists, setReadingLists] = useState([]);
@@ -15,15 +15,19 @@ const LibraryPage = () => {
   const navigate = useNavigate();
 
   const fetchLibrary = async () => {
+    setLoading(true);
     const res = await fetch(`${BASE_URL}/library/user/${userId}`);
     const data = await res.json();
     setLibraryBooks(data);
+    setLoading(false);
   };
 
   const fetchLists = async () => {
+    setLoading(true);
     const res = await fetch(`${BASE_URL}/readinglist/user/${userId}`);
     const data = await res.json();
     setReadingLists(data);
+    setLoading(false);
   };
 
   const handleListClick = (listId) => {
@@ -31,6 +35,7 @@ const LibraryPage = () => {
   };
 
   const handleCreateList = async () => {
+    setLoading(true);
     if (!newListName.trim()) return;
     const newList = {
       name: newListName,
@@ -48,7 +53,7 @@ const LibraryPage = () => {
     setShowModal(false);
     fetchLists();
   };
-
+    setLoading(false);
   useEffect(() => {
     fetchLibrary();
     fetchLists();

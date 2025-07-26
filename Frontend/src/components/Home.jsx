@@ -8,7 +8,7 @@ import { fetchWithCache } from "../utils/fetchWithCache";
 import useOnlineStatus from "../utils/useOnlineStatus.js";
 import "./Home.css";
 
-const Home = ({ userId }) => {
+const Home = ({ userId, setLoading }) => {
   const [topPicks, setTopPicks] = useState([]);
   const [genres, setGenres] = useState([]);
   const [topUS, setTopUS] = useState([]);
@@ -21,7 +21,7 @@ const Home = ({ userId }) => {
 
   useEffect(() => {
     if (!userId) return;
-    {
+    {setLoading(true)
       fetchWithCache({
         cacheKey: "topPicks",
         getUrl: `${BASE_URL}/top-picks/${userId}`,
@@ -57,8 +57,10 @@ const Home = ({ userId }) => {
         setState: setTrendingByGenre,
         isOnline,
       });
+      setLoading(false);
     }
   }, [userId, isOnline]);
+   
 
   useEffect(() => {
     const handleOnline = () => {

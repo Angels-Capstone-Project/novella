@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 
-export default function CreateStoryPage() {
+export default function CreateStoryPage({setLoading}) {
   const [coverImage, setCoverImage] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +41,7 @@ export default function CreateStoryPage() {
     formData.append("authorId", authorId);
 
     try {
+      setLoading(true);
       const response = await axios.post(`${BASE_URL}/stories`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -58,6 +59,7 @@ export default function CreateStoryPage() {
         alert("Failed to create story. Check console for more info.");
       }
     }
+     setLoading(false)
   };
 
   return (

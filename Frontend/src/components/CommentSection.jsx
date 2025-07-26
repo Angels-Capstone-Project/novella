@@ -6,6 +6,7 @@ const CommentSection = ({ storyId }) => {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState("");
   const userId = localStorage.getItem("userId");
+  const [liked, setLiked] = useState(false);
 
   const fetchComments = async () => {
     const res = await fetch(`${BASE_URL}/comments/story/${storyId}`);
@@ -22,6 +23,10 @@ const CommentSection = ({ storyId }) => {
     });
     setText("");
     fetchComments();
+  };
+
+   const handleLike = async () => {
+      setLiked(!liked);
   };
 
   useEffect(() => {
@@ -48,17 +53,15 @@ const CommentSection = ({ storyId }) => {
           <div key={c.id} className="comment-item">
             <img src="/default-avatar.png" alt="Avatar" className="avatar" />
             <div className="comment-content">
-              <strong>{c.author?.name || "Anonymous"}</strong>
+              <strong>{c.author?.username || "Anonymous"}</strong>
               <p>{c.text}</p>
               <div className="comment-footer">
                 <span>{new Date(c.createdAt).toLocaleString()}</span>
-                <button className="reply-btn">Reply</button>
-                <button className="heart-btn">♡</button>
+                 <button onClick={handleLike}>{liked ? "❤️" : "🤍"}</button>
               </div>
             </div>
           </div>
         ))}
-        <button className="show-more-btn">Show more</button>
       </div>
     </div>
   );
