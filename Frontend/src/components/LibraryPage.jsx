@@ -133,8 +133,8 @@ const LibraryPage = ({ setLoading }) => {
                 <img src={book.story.coverImage} alt={book.story.title} />
                 <h4>{book.story.title}</h4>
                 <p>{book.story.author}</p>
-                <button onClick={(e) => handleRemove(e, book.story.id)}>
-                  Remove
+                <button className = "delete-btn" onClick={(e) => handleRemove(e, book.story.id)}>
+                  🚮
                 </button>
               </div>
             ))}
@@ -166,8 +166,8 @@ const LibraryPage = ({ setLoading }) => {
                     className="reading-list-cover"
                   />
                   <h3>{list.name}</h3>
-                  <button onClick={(e) => handleDeleteList(e, list.id)}>
-                    Delete List
+                  <button className = "delete-btn" onClick={(e) => handleDeleteList(e, list.id)}>
+                    🚮
                   </button>
                 </div>
               ))}
