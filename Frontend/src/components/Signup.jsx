@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
 import { BASE_URL } from "../utils/api";
+import LoadingSpinner from "./LoadingSpinner";
+
 
 const Signup = ({onSwitch}) => {
+  const navigate = useNavigate();
+  const[loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -37,6 +41,7 @@ const Signup = ({onSwitch}) => {
     }
 
     try {
+     
       const response = await axios.post(`${BASE_URL}/register`, {
         email: formData.email,
         username: formData.username,
@@ -47,11 +52,19 @@ const Signup = ({onSwitch}) => {
 
       console.log("Success!", response.data);
       alert("Signup successful");
+
+      if(onSwitch){
+        onSwitch();
+      }else {
+        navigate("/login")
+      }
     } catch (error) {
       alert(error.response?.data?.error || "Something went wrong.");
+    }finally{
+      setLoading(false);
     }
   };
-
+if  (loading) return <LoadingSpinner/>;
   return (
     <form onSubmit={handleSubmit} className="auth-form">
       <h2> Create an account</h2>

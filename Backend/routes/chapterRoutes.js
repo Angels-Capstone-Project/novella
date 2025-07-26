@@ -102,7 +102,7 @@ router.post("/save-draft", async (req, res) => {
       });
 
       return res.json(updatedDraft);
-    }
+    }else{
 
     // If draft doesn't exist, calculate order and create it
     const existingChapters = await prisma.chapter.count({
@@ -126,6 +126,7 @@ router.post("/save-draft", async (req, res) => {
     });
 
     return res.json(createdDraft);
+  }
   } catch (err) {
     console.error(" Failed to save draft:", err);
     return res.status(500).json({ error: err.message });
