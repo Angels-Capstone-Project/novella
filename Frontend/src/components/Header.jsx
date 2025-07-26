@@ -91,13 +91,12 @@ const Header = () => {
         )}
       </div>
 
-      <div className="header-right" ref={dropdownRef}>
+      <div className="write-dropdown" ref={dropdownRef}>
         <img
           src="https://via.placeholder.com/30"
           className="profile-icon"
           onClick={() => setIsOpen(!isOpen)}
         />
-        
         {isOpen && (
           <div className="dropdown-menu">
             <button onClick={handleProfileClick}>Profile </button>
