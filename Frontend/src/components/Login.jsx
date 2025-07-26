@@ -41,7 +41,6 @@ function Login({ onSwitch }) {
       navigate("/home", {replace:true});
       window.location.reload();
 
-      // TODO: save user info
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
       alert("Login failed. Check your credentials.");

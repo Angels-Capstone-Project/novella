@@ -1,94 +1,94 @@
 .comment-section {
-margin-top: 2rem;
-max-width: 600px;
-margin-inline: auto;
-font-family: sans-serif;
+  margin-top: 2rem;
+  max-width: 600px;
+  margin-inline: auto;
+  font-family: sans-serif;
 }
 
 .comment-input {
-display: flex;
-align-items: center;
-border: 1px solid #ddd;
-border-radius: 20px;
-padding: 0.6rem 1rem;
-background: #f9f9f9;
-margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 0.6rem 1rem;
+  background: #f9f9f9;
+  margin-bottom: 1.5rem;
 }
 
 .comment-input .avatar {
-width: 35px;
-height: 35px;
-border-radius: 50%;
-margin-right: 0.8rem;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 0.8rem;
 }
 
 .comment-input input {
-flex: 1;
-border: none;
-background: transparent;
-outline: none;
-font-size: 1rem;
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1rem;
 }
 
 .comment-input .send-btn {
-background: transparent;
-border: none;
-font-size: 1.2rem;
-cursor: pointer;
-color: #ff5b00;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #ff5b00;
 }
 
 .comment-list .comment-item {
-display: flex;
-align-items: flex-start;
-margin-bottom: 1.4rem;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.4rem;
 }
 
 .comment-list .avatar {
-width: 40px;
-height: 40px;
-border-radius: 50%;
-margin-right: 0.8rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 0.8rem;
 }
 
 .comment-content {
-background: #f3f3f3;
-padding: 0.8rem 1rem;
-border-radius: 12px;
-width: 100%;
+  background: #f3f3f3;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  width: 100%;
 }
 
 .comment-content p {
-margin: 0.3rem 0;
+  margin: 0.3rem 0;
 }
 
 .comment-footer {
-display: flex;
-align-items: center;
-gap: 1rem;
-font-size: 0.85rem;
-color: #555;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: #555;
 }
 
 .reply-btn,
 .heart-btn {
-background: none;
-border: none;
-cursor: pointer;
-color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
 }
 
 .reply-btn:hover,
 .heart-btn:hover {
-color: #ff5b00;
+  color: #ff5b00;
 }
 
 .show-more-btn {
-margin-top: 1rem;
-background: none;
-border: 1px solid #ddd;
-padding: 0.5rem 1rem;
-border-radius: 10px;
-cursor: pointer;
-font-weight: bold;
+  margin-top: 1rem;
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
 }

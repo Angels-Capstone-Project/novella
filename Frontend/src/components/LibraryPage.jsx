@@ -1,5 +1,3 @@
-// LibraryPage.jsx
-
 import React, { useState, useEffect } from "react";
 import "./LibraryPage.css";
 import { BASE_URL } from "../utils/api";
