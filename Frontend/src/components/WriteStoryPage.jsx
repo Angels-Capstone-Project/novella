@@ -155,9 +155,7 @@ export default function WritePage() {
     }
   };
 
-  const handlePreview = () => {
-    alert("Preview would open here!");
-  };
+
 
   return (
     <>
@@ -222,9 +220,6 @@ export default function WritePage() {
             Save
           </button>
 
-          <button className="preview-button" onClick={handlePreview}>
-            Preview
-          </button>
 
           <button
             className="publish-button"
