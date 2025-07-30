@@ -61,7 +61,7 @@ id   String   @id @default(uuid())
 text   String
 author  User    @relation(fields: [authorId], references: [id])
 authorId   String
-story   Story    @relation(fields: [storyId], references: [id])
+story   Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
 storyId   String
 createdAt   DateTime   @default(now())
 }

@@ -86,7 +86,7 @@ export default function WritePage() {
     };
 
     await set(`draft-${chapterId}`, draft);
-    setSaveStatus("Saved locally while offline 🟠");
+    setSaveStatus("Draft Saved!❤️");
   };
 
   // 3. Sync drafts when back online
