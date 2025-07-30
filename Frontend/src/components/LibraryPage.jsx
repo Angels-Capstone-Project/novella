@@ -95,7 +95,9 @@ const LibraryPage = ({ setLoading }) => {
     setShowModal(false);
     fetchLists();
   };
+  setTimeout(() =>{
   setLoading(false);
+  }, 0);
   useEffect(() => {
     fetchLibrary();
     fetchLists();
