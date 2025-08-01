@@ -9,6 +9,8 @@ const Header = () => {
   const [query, setQuery] = useState("");
   const [isWriteOpen, setIsWriteOpen] = useState(false);
   const { showTooltip, updatePosition, hideTooltip } = useTooltip();
+  const user = localStorage.getItem("userId");
+
 
   const handleSearch = (e) => {
     if (e.key === "Enter" && query.trim()) {
@@ -59,6 +61,9 @@ const Header = () => {
         className="header-left"
         onClick={() => navigate("/home")}
         style={{ cursor: "pointer" }}
+        onMouseEnter={(e) => showTooltip(" Click to go to home page", e)}
+        onMouseMove={updatePosition}
+        onMouseLeave={hideTooltip}
       >
         Novella
       </div>
@@ -92,11 +97,40 @@ const Header = () => {
       </div>
 
       <div className="write-dropdown" ref={dropdownRef}>
-        <img
-          src="https://via.placeholder.com/30"
-          className="profile-icon"
-          onClick={() => setIsOpen(!isOpen)}
-        />
+        {user?.profileImage ? (
+          <img
+            src={user.profileImage}
+            className="profile-icon"
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: "50%",
+              objectFit: "cover",
+              cursor: "pointer",
+            }}
+          />
+        ) : (
+          <div
+            onClick={() => setIsOpen(!isOpen)}
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: "50%",
+              backgroundColor: "#ff6b35",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: 16,
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            {user?.username?.charAt(0) || "😊"}
+          </div>
+        )}
         {isOpen && (
           <div className="dropdown-menu">
             <button onClick={handleProfileClick}>Profile </button>

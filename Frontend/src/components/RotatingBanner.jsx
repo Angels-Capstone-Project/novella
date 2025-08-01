@@ -22,13 +22,48 @@ const bannerData = [
     description:
       "Grayson never forgot her. Now she’s finally seeing him. Emotional & beloved with 2.3M reads.",
   },
+  {
+    image: "https://picsum.photos/900/300?random=4",
+    title: "He swore off basketball...",
+    description:
+      "Then he met the teammate. His twin’s best friend. The girl who makes him brave.",
+  },
+
+  {
+    image: "https://picsum.photos/900/300?random=5",
+    title: "She broke all his rules — and he liked it.",
+    description:
+      "He was the ice king of Crestwood High. She melted his walls one smile at a time.",
+  },
+  {
+    image: "https://picsum.photos/900/300?random=6",
+    title: "A pact. A kiss. And a summer that changed everything.",
+    description:
+      "When best friends fake-date to protect each other, the line between pretend and real starts to blur.",
+  },
+  {
+    image: "https://picsum.photos/900/300?random=7",
+    title: "She was sunshine. He was the storm.",
+    description:
+      "No one thought they'd survive each other — but maybe they were exactly what the other needed.",
+  },
+  {
+    image: "https://picsum.photos/900/300?random=8",
+    title: "This time, she’s not running.",
+    description:
+      "He broke her heart once. Now he’s back. And she’s stronger than ever.",
+  },
+  {
+    image: "https://picsum.photos/900/300?random=9",
+    title: "He was her brother’s rival. Now he’s her secret.",
+    description:
+      "She swore she’d stay away from him. But hearts don’t follow rules — and neither does love.",
+  },
 ];
 
 const RotatingBanner = () => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
-
-const { showTooltip, updatePosition, hideTooltip } = useTooltip();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -48,13 +83,6 @@ const { showTooltip, updatePosition, hideTooltip } = useTooltip();
         <button
           className="read-now-button"
           onClick={() => navigate("/read/:bookId")}
-          onMouseEnter={(e) => {
-            showTooltip("Click to start reading this story", e)
-          }}
-          onMouseMove={(e) =>
-            showTooltip("Click to start reading this story", e)
-          }
-          onMouseLeave={hideTooltip}
         >
           READ NOW
         </button>

@@ -72,28 +72,29 @@
 
 }
 
-.story-title,
+.story-titles,
 .story-author {
   position: absolute;
   left: 24px;
-  color: #fff;
+  color:white;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   max-width: min(60ch, 85%);
-  /* margin-left: 100px; */
 }
 
-.story-title  {
+.story-titles  {
   bottom: 42px;
   font-size: 1.75rem;
   font-weight: 700;
-   margin-left: 100px;
+   margin-left: 50px;
 }
 
 .story-author {
   bottom: 16px;
   font-size: 1rem;
   opacity: 0.95;
-  margin-left: 100px;
+  margin-left: 50px;
+  
+  
 }
 
 .story-banner::after {

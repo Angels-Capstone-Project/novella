@@ -36,7 +36,24 @@ const CommentSection = ({ storyId }) => {
   return (
     <div className="comment-section">
       <div className="comment-input">
-        <img src="/default-avatar.png" alt="Profile" className="avatar" />
+         <div
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: "50%",
+              backgroundColor: "#ff6b35",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: 16,
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            {userId?.username?.charAt(0) || "😊"}
+          </div>
         <input
           type="text"
           placeholder="Write a comment..."
@@ -51,7 +68,24 @@ const CommentSection = ({ storyId }) => {
       <div className="comment-list">
         {comments.map((c) => (
           <div key={c.id} className="comment-item">
-            <img src="/default-avatar.png" alt="Avatar" className="avatar" />
+            <div
+            style={{
+              width: 35,
+              height: 35,
+              borderRadius: "50%",
+              backgroundColor: "#ff6b35",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: 16,
+              cursor: "pointer",
+              textTransform: "uppercase",
+            }}
+          >
+            {comments.userId?.username?.charAt(0) || "😊"}
+          </div>
             <div className="comment-content">
               <strong>{c.author?.username || "Anonymous"}</strong>
               <p>{c.text}</p>

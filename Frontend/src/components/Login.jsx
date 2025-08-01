@@ -37,6 +37,7 @@ function Login({ onSwitch }) {
       alert("Login successful!");
 
       localStorage.setItem("userId", res.data.user.id);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
       navigate("/home", {replace:true});
       window.location.reload();

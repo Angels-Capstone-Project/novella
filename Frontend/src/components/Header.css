@@ -26,7 +26,27 @@
   z-index: 10001;
 
 }
+button.dropdown-toggles {
+ background-color: #ff7043; /* warm orange like Wattpad */
+ color: white;
+ font-size: 14px;
+ font-weight: 600;
+ border: none;
+ border-radius: 6px;
+ padding: 8px 16px;
+ cursor: pointer;
+ transition: background-color 0.2s ease;
+ box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
 
+button.dropdown-toggles:hover {
+ background-color: #e0552c;
+}
+
+button.dropdown-toggles:focus {
+ outline: none;
+ box-shadow: 0 0 0 2px rgba(255, 112, 67, 0.4);
+}
 .dropdown-menu {
 position: absolute;
 top: 100%;

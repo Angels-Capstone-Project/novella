@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 20px;
   font-family: "Segoe UI", sans-serif;
-   margin-top: 100px;
+  margin-top: 100px;
 }
 
 .story-header {
@@ -31,7 +31,6 @@
   color: gray;
 }
 
-
 /* Chapter Title */
 .chapter-title-input {
   width: 100%;
@@ -54,6 +53,11 @@
   border-radius: 4px;
   resize: vertical;
 }
+.chapter-textarea:focus {
+  outline: none;
+  border: 2px solid #ff7043;
+  box-shadow: 0 0 0 3px rgba(255, 112, 67, 0.2);
+}
 
 /* Buttons */
 .chapter-actions {
@@ -63,7 +67,6 @@
 }
 
 .save-button,
-.preview-button,
 .publish-button {
   padding: 8px 16px;
   border: none;
@@ -73,18 +76,12 @@
 }
 
 .save-button {
-  background-color: white;
-  color: black;
-  border: 1px solid #ccc;
-}
-
-.preview-button {
-  background-color: white;
-  color: black;
+  background-color: #ef4723;
+  color: white;
   border: 1px solid #ccc;
 }
 
 .publish-button {
-  background-color: black;
+  background-color: #ef4723;
   color: white;
 }

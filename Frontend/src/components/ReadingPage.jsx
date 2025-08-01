@@ -113,7 +113,7 @@ const ReadingPage = () => {
             alt={storyInfo.title}
             className="story-banner-img"
           />
-          <h1 className="story-title">{storyInfo.title}</h1>
+          <h1 className="story-titles">{storyInfo.title}</h1>
           <p className="story-author">by {storyInfo.author?.username}</p>
         </div>
       )}
