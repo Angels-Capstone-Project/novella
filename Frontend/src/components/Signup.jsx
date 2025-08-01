@@ -63,9 +63,10 @@ const Signup = ({onSwitch}) => {
     }finally{
       setLoading(false);
     }
+    
   };
-if  (loading) return <LoadingSpinner/>;
   return (
+    
     <form onSubmit={handleSubmit} className="auth-form">
       <h2> Create an account</h2>
 

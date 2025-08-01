@@ -49,7 +49,6 @@ const { showTooltip, updatePosition, hideTooltip } = useTooltip();
           className="read-now-button"
           onClick={() => navigate("/read/:bookId")}
           onMouseEnter={(e) => {
-            console.log("Hovered");
             showTooltip("Click to start reading this story", e)
           }}
           onMouseMove={(e) =>

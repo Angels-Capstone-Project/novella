@@ -17,11 +17,13 @@ const Home = ({ userId, setLoading }) => {
   const [selectedBookId, setSelectedBookId] = useState(null);
   const [booksInRow, setBooksInRow] = useState([]);
   const [hasReloadedOnline, sethasReloadedOnline] = useState(false);
+  const [hovered, setHovered] = useState({ row: null, index: null });
   const isOnline = useOnlineStatus();
 
   useEffect(() => {
     if (!userId) return;
-    {setLoading(true)
+    {
+      setLoading(true);
       fetchWithCache({
         cacheKey: "topPicks",
         getUrl: `${BASE_URL}/top-picks/${userId}`,
@@ -60,7 +62,6 @@ const Home = ({ userId, setLoading }) => {
       setLoading(false);
     }
   }, [userId, isOnline]);
-   
 
   useEffect(() => {
     const handleOnline = () => {
@@ -91,6 +92,8 @@ const Home = ({ userId, setLoading }) => {
           stories.map((story, index) => (
             <div
               key={story.id || index}
+              onMouseEnter={() => setHovered({ row: title, index })}
+              onMouseLeave={() => setHovered({ row: null, index: null })}
               style={{
                 minWidth: "150px",
                 flexShrink: 0,
@@ -99,8 +102,20 @@ const Home = ({ userId, setLoading }) => {
                 borderRadius: "10px",
                 textAlign: "center",
                 cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                transition: "transform 0.2s ease-in-out",
+                boxShadow:
+                  hovered.row === title && hovered.index === index
+                    ? "0 10px 20px rgba(239, 71, 35, 0.5)" 
+                    : "0 2px 8px rgba(0,0,0,0.04)",
+                transform:
+                  hovered.row === title && hovered.index === index
+                    ? "translateY(-5px) scale(1.03)"
+                    : "none",
+                border:
+                  hovered.row === title && hovered.index === index
+                    ? "2px solid #ef4723"
+                    : "2px solid transparent",
+                transition:
+                  "transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out, border 0.3s ease",
               }}
               onClick={() => onCardClick(story.id, stories)}
             >
@@ -136,57 +151,55 @@ const Home = ({ userId, setLoading }) => {
 
   return (
     <div className="home-app">
-    <Header />
-      
-    <div className="home-container">
-      {!isOnline && (
-        <div
-          style={{
-            background: "#ffcccc",
-            color: "#990000",
-            textAlign: "center",
-            padding: "10px",
-            fontWeight: "bold",
-          }}
-        >
-          ⚠️ You’re offline. Some features may not work properly.
-        </div>
-      )}
-      <RotatingBanner />
-      {renderStoryList(
-        "Top Picks for You",
-        topPicks?.length ? topPicks : [],
-        false,
-        handelCardClick
-      )}
-      {renderStoryList(
-        "Top 10 in the U.S.",
-        topUS?.length ? topUS : [],
-        true,
-        handelCardClick
-      )}
-      {Object.keys(trendingByGenre).map((genre) => (
-        <div key={genre}>
-          {renderStoryList(
-            `Trending in ${genre}`,
-            trendingByGenre[genre]?.length ? trendingByGenre[genre] : [],
-            false,
-            handelCardClick
-          )}
-        </div>
-      ))}
+      <Header />
 
-      
+      <div className="home-container">
+        {!isOnline && (
+          <div
+            style={{
+              background: "#ffcccc",
+              color: "#990000",
+              textAlign: "center",
+              padding: "10px",
+              fontWeight: "bold",
+            }}
+          >
+            ⚠️ You’re offline. Some features may not work properly.
+          </div>
+        )}
+        <RotatingBanner />
+        {renderStoryList(
+          "Top Picks for You",
+          topPicks?.length ? topPicks : [],
+          false,
+          handelCardClick
+        )}
+        {renderStoryList(
+          "Top 10 in the U.S.",
+          topUS?.length ? topUS : [],
+          true,
+          handelCardClick
+        )}
+        {Object.keys(trendingByGenre).map((genre) => (
+          <div key={genre}>
+            {renderStoryList(
+              `Trending in ${genre}`,
+              trendingByGenre[genre]?.length ? trendingByGenre[genre] : [],
+              false,
+              handelCardClick
+            )}
+          </div>
+        ))}
 
-      {showModal && (
-        <BookPreviewModal
-          books={booksInRow}
-          selectedBookId={selectedBookId}
-          onClose={() => setShowModal(false)}
-        />
-      )}
-    </div>
-    <footer className="welcome-footer">© 2025 Novella</footer>
+        {showModal && (
+          <BookPreviewModal
+            books={booksInRow}
+            selectedBookId={selectedBookId}
+            onClose={() => setShowModal(false)}
+          />
+        )}
+      </div>
+      <footer className="welcome-footer">© 2025 Novella</footer>
     </div>
   );
 };

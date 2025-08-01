@@ -28,13 +28,29 @@
   flex-direction: column;
   justify-content: center;
   border-radius: 10px;
+  background:(0, 0, 0, 0.6);
 }
 
-.read-now-btn {
+.banner-content p{
+  color: white;
+  font-weight: bold;
+  font-size: large;
+}
+
+.banner-content h2{
+  color:white;
+  font-size: 2rem;
+  font-weight: bold;
+
+}
+
+.read-now-button {
   margin-top: 10px;
   border: none;
   padding: 0.5rem 1.2rem;
   border-radius: 20px;
   font-weight: bold;
   cursor: pointer;
+  color: #ef4723;
+  font-size: 1rem;
 }
