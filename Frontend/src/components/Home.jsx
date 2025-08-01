@@ -120,7 +120,7 @@ const Home = ({ userId, setLoading }) => {
               onClick={() => onCardClick(story.id, stories)}
             >
               {showNumber && (
-                <div style={{ fontSize: "24px", fontWeight: "bold" }}>
+                <div style={{ fontSize: "24px", fontWeight: "bold", color:"#ef4723", }}>
                   {index + 1}
                 </div>
               )}
