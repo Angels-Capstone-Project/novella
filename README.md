@@ -1,48 +1,75 @@
-# novella
-#Core Features
+# Novella
 
-[x] As a writer, I want to create an account, so that I can start publishing stories. - Completed
+Novella is a full-stack story-sharing platform designed to explore reliability, offline-first systems, and personalized content delivery.
 
-[x] As a writer, I want to create an account, so that I can start publishing stories. - Completed
+## Why I Built This
 
-[x] As a writer, I want to write and publish a story, so that others can read my work. - completed
+Most reading platforms assume constant internet access and treat caching as a performance optimization. I wanted to test whether that assumption actually holds under real-world conditions.
 
-[x]As a writer, I want to edit or delete my published stories, so that I can manage my content. Completed
+## Key Systems
 
-[x] As a writer, I want to view all my published stories in one place, so that I can keep track of my writing. - completed
+### Offline-First Caching (IndexedDB)
 
-[x] As a writer, I want to see how many likes my stories have, so that I know what readers enjoy. - completed
+Initially, I implemented caching using localStorage. Under real usage, this failed:
+- Payload size limits caused storage errors
+- API failures led to missing content
+- Users lost access to previously loaded data
 
-[x] As a reader, I want to create an account or log in, so that I can save and interact with stories. Week 1 - Completed
+I replaced this with IndexedDB using a hybrid fetch strategy:
+- When online: fetch from backend, then persist to cache
+- When offline: serve from IndexedDB
 
-[x] As a reader, I want to search or browse for stories by genre or keyword, so that I can find what I want to read. Week 3- completed
+**Result:** Previously viewed content reliably loads without internet, and request failures no longer break the UI.
 
-[x] As a reader, I want to open and read full stories, so that I can enjoy the content. - Week 2 - completed
+---
 
-[x] As a reader, I want to like stories, so that I can support the writers I enjoy. Week 2 -  completed
+### Hybrid Fetch System
 
-[x] As a reader, I want to add stories to my library, so that I can easily find and continue reading them later. Week 2 - completed
+I built a reusable `fetchWithCache` utility that:
+- Detects online/offline state
+- Decides whether to fetch or read from cache
+- Syncs backend data into IndexedDB
 
+This removed duplicated logic across:
+- Top Picks
+- Trending by Genre
+- Homepage data
 
-#Stretch Features
+---
 
-[] As a reader, I want to follow writers, so that I can get notified when they publish new stories.
+### Recommendation Engine
 
-[x] As a reader, I want to comment on stories, so that I can share feedback and connect with the writer.
+I implemented a scoring-based recommendation system combining:
+- User interactions (likes, reads)
+- System-generated tags from content
+- Audience filtering (based on age)
+- Engagement timing
 
-[x] As a writer, I want to upload a custom cover image for my story, so that it looks more attractive to readers.
+Each signal contributes independently to a final score, allowing recommendations even with sparse data.
 
-[] As a writer, I want to organize my stories into a series, so that readers can follow a longer narrative in order.
+---
 
-[x] Story reading bookmark
+## What I Learned
 
-[x] Reading list
+- Caching is not an optimization—it is core infrastructure for reliability
+- Storage limitations (like localStorage size) directly affect system correctness
+- Offline support changes how you design data flow, not just how you store it
+- Real-world failures (not assumptions) should drive system design decisions
 
-[x]  Rotating Banner
+---
 
+## Stack
 
-#Technical Challenge
+- React (frontend)
+- Node.js + Express (backend)
+- Prisma + PostgreSQL (database)
+- IndexedDB (offline caching)
 
-[x] Feed Page/Home Page Logic(Recommendations)
+---
 
-[x] Caching
+## Focus
+
+This project is less about features and more about:
+- System reliability under failure conditions
+- Designing around real-world constraints
+- Understanding how users actually experience systems, not how they are expected to
